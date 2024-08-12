@@ -16,14 +16,77 @@
   }
 }
 
+/* styles/globals.css などに追加 */
+
+.bg-custom-image {
+  background-image: url('/path-to-your-background-image.jpg');
+  /* 背景画像のパス */
+  background-size: cover;
+  background-position: center;
+}
+
+.background-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  /* 背景にオーバーレイ */
+  z-index: 10;
+}
+
+/* styles/globals.css などに追加 */
+
+.bg-shape-square {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 36%;
+  /* 適切なサイズに調整 */
+  height: 70%;
+  /* 適切なサイズに調整 */
+  background: white;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  /* 背景として最背面に配置 */
+  border-radius: 8px;
+  /* 四角形の角を丸める */
+}
+
+/* .bg-shape-circle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 60%;
+  height: 60%;
+  background: white;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 5;
+} */
+
+
+.bg-custom-image {
+  background-image: url('/images/rock.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: -1;
+}
+
+.background-overlay {
+  position: fixed;
+  height: 100vh;
+  width: 100vw;
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
 body {
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
+  background: linear-gradient(to bottom,
       transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+      rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb));
 }
 
 @layer utilities {
