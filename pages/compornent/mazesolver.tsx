@@ -47,15 +47,16 @@ export default class MazeSolver {
                 const direction = Maze.DIRECTIONS[i];
                 const npx = pos.x + direction.x;
                 const npy = pos.y + direction.y;
-                const kavex = pos.x + (direction.x / 2);
-                const kavey = pos.y + (direction.y / 2);
-
-                // Check bounds and wall
-                if (0 <= npx && npx < Maze.SIZE && 0 <= npy && npy < Maze.SIZE && !this.maze.getCell(kavex, kavey)) {
-                    const newState = State.fromDirection(state, direction);
-                    if (this.idSearch(newState, depth + 1, currentLimit)) {
-                        this.record(direction); // Ensure this method exists
-                        return true;
+                if (0 <= npx && npx <= Maze.SIZE && 0 <= npy && npy <= Maze.SIZE) {
+                    const wallx = pos.x + (direction.x / 2);
+                    const wally = pos.y + (direction.y / 2);
+                    // Check bounds and wall
+                    if (!this.maze.getCell(wallx, wally)) {
+                        const newState = State.fromDirection(state, direction);
+                        if (this.idSearch(newState, depth + 1, currentLimit)) {
+                            this.record(direction); // Ensure this method exists
+                            return true;
+                        }
                     }
                 }
             }
@@ -68,7 +69,11 @@ export default class MazeSolver {
     public solve(): boolean {
         const depthLimit = (Maze.SIZE - 1) * (Maze.SIZE - 1) / 4 - 1;
         for (let l = 0; l <= depthLimit; l++) {
-            this.stateDepths = Array(Maze.SIZE).fill(null).map(() => Array(Maze.SIZE).fill(Number.MAX_SAFE_INTEGER));
+            for (var x = 1; x < Maze.SIZE; x += 2) {
+                for (var y = 1; y < Maze.SIZE; y += 2) {
+                    this.stateDepths = Array(Maze.SIZE).fill(null).map(() => Array(Maze.SIZE).fill(Number.MAX_SAFE_INTEGER));
+                }
+            }
             if (this.idSearch(new State(Maze.START), 0, l)) {
                 return true;
             }
@@ -76,3 +81,4 @@ export default class MazeSolver {
         return false;
     }
 }
+

@@ -17,7 +17,23 @@ export default class Maze {
     public static readonly DIRECTIONS: Vector[] = [Maze.UP, Maze.RIGHT, Maze.DOWN, Maze.LEFT]; // 4方向
 
     // コンストラクタ
-    constructor() {
+    // constructor() {
+    //     // SIZE x SIZE の 2D 配列を初期化、すべてのセルに壁があるとする
+    //     this.cells = Array.from({ length: Maze.SIZE }, () => Array(Maze.SIZE).fill(true));
+
+    //     // 外周と奇数座標のセルに壁を配置する
+    //     for (let y = 0; y < Maze.SIZE; y++) {
+    //         for (let x = 0; x < Maze.SIZE; x++) {
+    //             if (x === 0 || x === Maze.SIZE - 1 || y === 0 || y === Maze.SIZE - 1 || !(x % 2 === 1 && y % 2 === 1)) {
+    //                 this.cells[y][x] = true; // Wall
+    //             } else {
+    //                 this.cells[y][x] = false; // Passage
+    //             }
+    //         }
+    //     }
+    // }
+
+    constructor(mode?: string) {
         // SIZE x SIZE の 2D 配列を初期化、すべてのセルに壁があるとする
         this.cells = Array.from({ length: Maze.SIZE }, () => Array(Maze.SIZE).fill(true));
 

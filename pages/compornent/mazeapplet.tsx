@@ -11,18 +11,20 @@ const GOAL_POSITION = Maze.GOAL;
 
 interface Props {
     onFinish: () => void
+    mode?: string
 }
 
-const MazeApplet: React.FC<Props> = ({ onFinish }) => {
+const MazeApplet: React.FC<Props> = ({ onFinish, mode }) => {
     const [maze, setMaze] = useState<Maze>(new Maze());
     const [removedWalls, setRemovedWalls] = useState<{ x: number; y: number }[]>([]);
     const [playerPosition, setPlayerPosition] = useState(START_POSITION);
     const [playerTrail, setPlayerTrail] = useState<{ x: number; y: number }[]>([START_POSITION]);
     const [shortestPath, setShortestPath] = useState<{ x: number; y: number }[]>([]);
     const [drawPathFlag, setDrawPathFlag] = useState(false);
+    const [drawFlag, setDrawFlag] = useState(false);
 
-    const [timerActive, setTimerActive] = useState(false); // Timer active state
-    const [timerKey, setTimerKey] = useState<number>(0); // Key to reset Timer component
+    // const [timerActive, setTimerActive] = useState(false); // Timer active state
+    // const [timerKey, setTimerKey] = useState<number>(0); // Key to reset Timer component
 
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
@@ -32,7 +34,6 @@ const MazeApplet: React.FC<Props> = ({ onFinish }) => {
         //     mazeInstance.initialize(); // 状態を初期化する
         //     return mazeInstance;
         // };
-
 
         // const mazeInstance = new Maze();
         // mazeInstance.initialize(); // 状態を初期化する
@@ -59,10 +60,10 @@ const MazeApplet: React.FC<Props> = ({ onFinish }) => {
         removeWalls();
 
         // Optionally, solve maze and set shortest path
-        const mazeSolver = new MazeSolver(generatedMaze);
-        if (mazeSolver.solve()) {
-            setShortestPath(mazeSolver.getSolution().map(v => ({ x: v.x, y: v.y })));
-        }
+        // const mazeSolver = new MazeSolver(generatedMaze);
+        // if (mazeSolver.solve()) {
+        //     setShortestPath(mazeSolver.getSolution().map(v => ({ x: v.x, y: v.y })));
+        // }
 
     }, []);
 
@@ -142,16 +143,25 @@ const MazeApplet: React.FC<Props> = ({ onFinish }) => {
         }
     };
 
+
+
+
+
     const movePlayer = (dx: number, dy: number) => {
-        console.log('move')
+        console.log('move');
         const newX = playerPosition.x + dx;
         const newY = playerPosition.y + dy;
+
+        // サイズとゴールの位置をインスタンスから取得
+        // const SIZE = maze.SIZE;
+        // const GOAL_POSITION = maze.GOAL;
+
         if (newX >= 0 && newX < SIZE && newY >= 0 && newY < SIZE && !maze.getCell(newX, newY)) {
             setPlayerPosition({ x: newX, y: newY });
             setPlayerTrail(prevTrail => [...prevTrail, { x: newX, y: newY }]);
             if (newX === GOAL_POSITION.x && newY === GOAL_POSITION.y) {
                 setDrawPathFlag(true);
-                onFinish()
+                onFinish(); // ゴールに到達したときの処理
             }
         }
     };
@@ -191,17 +201,16 @@ const MazeApplet: React.FC<Props> = ({ onFinish }) => {
     }, [playerPosition, drawPathFlag]);
 
     return (
-        <div className="relative w-80 h-80 bg-white rounded-lg shadow-lg z-20 flex items-center justify-center">            <canvas
-            width={SIZE * CELL_SIZE}
-            height={SIZE * CELL_SIZE}
-            ref={canvasRef}
-        />
+        <div className="relative flex items-center justify-center" style={{ width: SIZE * CELL_SIZE, height: SIZE * CELL_SIZE }}>
+            <div className="absolute inset-0 bg-white rounded-lg shadow-lg flex items-center justify-center">
+                <canvas
+                    width={SIZE * CELL_SIZE}
+                    height={SIZE * CELL_SIZE}
+                    ref={canvasRef}
+                />
+            </div>
         </div>
     );
 };
 
 export default MazeApplet;
-
-
-
-

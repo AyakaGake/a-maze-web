@@ -1,4 +1,5 @@
 import { useRouter } from 'next/router';
+import { useState } from 'react';
 
 // const logFunction = () => {
 //     console.log("Start");
@@ -7,11 +8,14 @@ import { useRouter } from 'next/router';
 
 export default function Mode() {
     const router = useRouter();
+    const [selectedMode, setSelectedMode] = useState<string>('easy'); // Default to 'easy'
 
     const handleSubmit = () => {
         console.log("Start");
-        // TODO: navigate to gameplay page;
-        router.push('/home/gameplay');
+        router.push({
+            pathname: '/home/gameplay',
+            query: { mode: selectedMode }
+        });
     };
 
     return (
@@ -27,15 +31,15 @@ export default function Mode() {
             <p className="mb-4 text-red-900">Please choose the mode</p>
             <div className="flex gap-4 mb-4">
                 <label className="flex items-center text-red-900">
-                    <input type="radio" name="mode" value="easy" defaultChecked className="mr-2" />
+                    <input type="radio" name="mode" value="easy" defaultChecked onChange={(ev) => { setSelectedMode(ev.target.value) }} className="mr-2" />
                     Easy
                 </label>
                 <label className="flex items-center text-red-900">
-                    <input type="radio" name="mode" value="hard" className="mr-2" />
+                    <input type="radio" name="mode" value="hard" onChange={(ev) => { setSelectedMode(ev.target.value) }} className="mr-2" />
                     Hard
                 </label>
                 <label className="flex items-center text-red-900">
-                    <input type="radio" name="mode" value="super hard" className="mr-2" />
+                    <input type="radio" name="mode" value="super-hard" onChange={(ev) => { setSelectedMode(ev.target.value) }} className="mr-2" />
                     Super Hard
                 </label>
             </div>
