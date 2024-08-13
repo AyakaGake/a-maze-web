@@ -14,6 +14,9 @@ interface Props {
     mode?: string
 }
 
+
+
+
 const MazeApplet: React.FC<Props> = ({ onFinish, mode }) => {
     const [maze, setMaze] = useState<Maze>(new Maze());
     const [removedWalls, setRemovedWalls] = useState<{ x: number; y: number }[]>([]);
@@ -69,6 +72,7 @@ const MazeApplet: React.FC<Props> = ({ onFinish, mode }) => {
 
 
     useEffect(() => {
+
         const canvas = canvasRef.current;
         if (canvas) {
             const ctx = canvas.getContext('2d');
@@ -85,6 +89,41 @@ const MazeApplet: React.FC<Props> = ({ onFinish, mode }) => {
 
 
     }, [playerPosition, playerTrail, shortestPath, drawPathFlag]);
+
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            e.preventDefault();
+            switch (e.key) {
+                case 'ArrowUp':
+                    movePlayer(0, -1);
+                    break;
+                case 'ArrowDown':
+                    movePlayer(0, 1);
+                    break;
+                case 'ArrowLeft':
+                    movePlayer(-1, 0);
+                    break;
+                case 'ArrowRight':
+                    movePlayer(1, 0);
+                    break;
+                case 'r':
+                    setPlayerPosition(START_POSITION);
+                    setPlayerTrail([START_POSITION]);
+
+                    setDrawPathFlag(false);
+                    break;
+                case 'd':
+                    setDrawPathFlag(!drawPathFlag);
+                    break;
+                default:
+                    break;
+
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [playerPosition, drawPathFlag]);
 
     const drawMaze = (ctx: CanvasRenderingContext2D) => {
         ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
@@ -143,10 +182,6 @@ const MazeApplet: React.FC<Props> = ({ onFinish, mode }) => {
         }
     };
 
-
-
-
-
     const movePlayer = (dx: number, dy: number) => {
         console.log('move');
         const newX = playerPosition.x + dx;
@@ -165,40 +200,6 @@ const MazeApplet: React.FC<Props> = ({ onFinish, mode }) => {
             }
         }
     };
-
-    useEffect(() => {
-        const handleKeyDown = (e: KeyboardEvent) => {
-            e.preventDefault();
-            switch (e.key) {
-                case 'ArrowUp':
-                    movePlayer(0, -1);
-                    break;
-                case 'ArrowDown':
-                    movePlayer(0, 1);
-                    break;
-                case 'ArrowLeft':
-                    movePlayer(-1, 0);
-                    break;
-                case 'ArrowRight':
-                    movePlayer(1, 0);
-                    break;
-                case 'r':
-                    setPlayerPosition(START_POSITION);
-                    setPlayerTrail([START_POSITION]);
-
-                    setDrawPathFlag(false);
-                    break;
-                case 'd':
-                    setDrawPathFlag(!drawPathFlag);
-                    break;
-                default:
-                    break;
-
-            }
-        };
-        window.addEventListener('keydown', handleKeyDown);
-        return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [playerPosition, drawPathFlag]);
 
     return (
         <div className="relative flex items-center justify-center" style={{ width: SIZE * CELL_SIZE, height: SIZE * CELL_SIZE }}>

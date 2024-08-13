@@ -8,6 +8,7 @@
   --background-end-rgb: 255, 255, 255;
 }
 
+
 @media (prefers-color-scheme: dark) {
   :root {
     --foreground-rgb: 255, 255, 255;
@@ -18,14 +19,14 @@
 
 /* styles/globals.css などに追加 */
 
-.bg-custom-image {
+/* .bg-custom-image {
   background-image: url('/path-to-your-background-image.jpg');
   /* 背景画像のパス */
-  background-size: cover;
-  background-position: center;
-}
+/* background-size: cover;
+background-position: center;
+} */
 
-.background-overlay {
+*/ .background-overlay {
   position: absolute;
   top: 0;
   left: 0;
