@@ -1,11 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { MazeGenerator } from './mazegenerator';
+import MazeSolver from './mazesolver';
 import Maze from './maze';
+import Vector from "./Vector";
 
 const SIZE = Maze.SIZE;
 const CELL_SIZE = Maze.CELL_SIZE;
 const START_POSITION = Maze.START;
 const GOAL_POSITION = Maze.GOAL;
+
 
 const MazeApplet: React.FC = () => {
     const [maze, setMaze] = useState<Maze>(new Maze());
@@ -17,6 +20,15 @@ const MazeApplet: React.FC = () => {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
     useEffect(() => {
+        // const initializeMaze = () => {
+        //     const mazeInstance = new Maze();
+        //     mazeInstance.initialize(); // 状態を初期化する
+        //     return mazeInstance;
+        // };
+
+
+        // const mazeInstance = new Maze();
+        // mazeInstance.initialize(); // 状態を初期化する
         const mazeGenerator = new MazeGenerator();
         mazeGenerator.generate();
         const generatedMaze = mazeGenerator.getMaze();
@@ -40,12 +52,13 @@ const MazeApplet: React.FC = () => {
         removeWalls();
 
         // Optionally, solve maze and set shortest path
-        // const mazeSolver = new MazeSolver(generatedMaze);
-        // if (mazeSolver.solve()) {
-        //     setShortestPath(mazeSolver.getSolution().map(v => ({ x: v.x, y: v.y })));
-        // }
+        const mazeSolver = new MazeSolver(generatedMaze);
+        if (mazeSolver.solve()) {
+            setShortestPath(mazeSolver.getSolution().map(v => ({ x: v.x, y: v.y })));
+        }
 
     }, []);
+
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -61,6 +74,7 @@ const MazeApplet: React.FC = () => {
                 }
             }
         }
+
     }, [playerPosition, playerTrail, shortestPath, drawPathFlag]);
 
     const drawMaze = (ctx: CanvasRenderingContext2D) => {

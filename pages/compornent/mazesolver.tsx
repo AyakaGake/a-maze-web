@@ -1,6 +1,7 @@
 // MazeSolver.ts
 import Maze from '@/pages/compornent/maze';
 import Vector from '@/pages/compornent/Vector';
+import State from './State';
 
 
 export default class MazeSolver {
@@ -25,29 +26,36 @@ export default class MazeSolver {
     }
 
     // 反復深化法を実行する
-    private idSearch(state: MazeState, depth: number, currentLimit: number): boolean {
-        const { x, y } = state.position;
+    private idSearch(state: State, depth: number, currentLimit: number): boolean {
+        // Check and update depth
+        const pos = state.position; // Directly access the position property
+        if (depth < this.stateDepths[pos.x][pos.y]) {
+            this.stateDepths[pos.x][pos.y] = depth;
 
-        if (depth < this.stateDepths[x][y]) {
-            this.stateDepths[x][y] = depth;
-            if (this.maze.checkSuccess(state.position)) {
+            // Check if the goal is reached
+            if (state.checkSuccess(Maze.GOAL)) {
                 return true;
             }
+
+            // If depth limit reached, return false
             if (depth === currentLimit) {
                 return false;
             }
-            for (const direction of Maze.DIRECTIONS) {
-                const npx = state.position.x + direction.x;
-                const npy = state.position.y + direction.y;
-                if (npx >= 0 && npx < Maze.SIZE && npy >= 0 && npy < Maze.SIZE) {
-                    const kavex = state.position.x + direction.x / 2;
-                    const kavey = state.position.y + direction.y / 2;
-                    if (!this.maze.getCell(kavex, kavey)) {
-                        const newState = MazeState.fromState(state, direction);
-                        if (this.idSearch(newState, depth + 1, currentLimit)) {
-                            this.record(direction);
-                            return true;
-                        }
+
+            // Explore all directions
+            for (let i = 0; i < Maze.DIRECTIONS.length; i++) {
+                const direction = Maze.DIRECTIONS[i];
+                const npx = pos.x + direction.x;
+                const npy = pos.y + direction.y;
+                const kavex = pos.x + (direction.x / 2);
+                const kavey = pos.y + (direction.y / 2);
+
+                // Check bounds and wall
+                if (0 <= npx && npx < Maze.SIZE && 0 <= npy && npy < Maze.SIZE && !this.maze.getCell(kavex, kavey)) {
+                    const newState = State.fromDirection(state, direction);
+                    if (this.idSearch(newState, depth + 1, currentLimit)) {
+                        this.record(direction); // Ensure this method exists
+                        return true;
                     }
                 }
             }
@@ -55,12 +63,13 @@ export default class MazeSolver {
         return false;
     }
 
+
     // 最短経路を求める
     public solve(): boolean {
         const depthLimit = (Maze.SIZE - 1) * (Maze.SIZE - 1) / 4 - 1;
         for (let l = 0; l <= depthLimit; l++) {
             this.stateDepths = Array(Maze.SIZE).fill(null).map(() => Array(Maze.SIZE).fill(Number.MAX_SAFE_INTEGER));
-            if (this.idSearch(new MazeState(Maze.START), 0, l)) {
+            if (this.idSearch(new State(Maze.START), 0, l)) {
                 return true;
             }
         }
