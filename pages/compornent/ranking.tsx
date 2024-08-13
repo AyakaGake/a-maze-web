@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import Timer from './timer';
 
 type Player = {
     name: string;

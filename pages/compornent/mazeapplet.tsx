@@ -9,14 +9,21 @@ const CELL_SIZE = Maze.CELL_SIZE;
 const START_POSITION = Maze.START;
 const GOAL_POSITION = Maze.GOAL;
 
+interface Props {
+    onFinish: () => void
+}
 
-const MazeApplet: React.FC = () => {
+const MazeApplet: React.FC<Props> = ({ onFinish }) => {
     const [maze, setMaze] = useState<Maze>(new Maze());
     const [removedWalls, setRemovedWalls] = useState<{ x: number; y: number }[]>([]);
     const [playerPosition, setPlayerPosition] = useState(START_POSITION);
     const [playerTrail, setPlayerTrail] = useState<{ x: number; y: number }[]>([START_POSITION]);
     const [shortestPath, setShortestPath] = useState<{ x: number; y: number }[]>([]);
     const [drawPathFlag, setDrawPathFlag] = useState(false);
+
+    const [timerActive, setTimerActive] = useState(false); // Timer active state
+    const [timerKey, setTimerKey] = useState<number>(0); // Key to reset Timer component
+
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
     useEffect(() => {
@@ -74,6 +81,7 @@ const MazeApplet: React.FC = () => {
                 }
             }
         }
+
 
     }, [playerPosition, playerTrail, shortestPath, drawPathFlag]);
 
@@ -135,6 +143,7 @@ const MazeApplet: React.FC = () => {
     };
 
     const movePlayer = (dx: number, dy: number) => {
+        console.log('move')
         const newX = playerPosition.x + dx;
         const newY = playerPosition.y + dy;
         if (newX >= 0 && newX < SIZE && newY >= 0 && newY < SIZE && !maze.getCell(newX, newY)) {
@@ -142,6 +151,7 @@ const MazeApplet: React.FC = () => {
             setPlayerTrail(prevTrail => [...prevTrail, { x: newX, y: newY }]);
             if (newX === GOAL_POSITION.x && newY === GOAL_POSITION.y) {
                 setDrawPathFlag(true);
+                onFinish()
             }
         }
     };
@@ -165,6 +175,7 @@ const MazeApplet: React.FC = () => {
                 case 'r':
                     setPlayerPosition(START_POSITION);
                     setPlayerTrail([START_POSITION]);
+
                     setDrawPathFlag(false);
                     break;
                 case 'd':
@@ -172,6 +183,7 @@ const MazeApplet: React.FC = () => {
                     break;
                 default:
                     break;
+
             }
         };
         window.addEventListener('keydown', handleKeyDown);
@@ -179,12 +191,17 @@ const MazeApplet: React.FC = () => {
     }, [playerPosition, drawPathFlag]);
 
     return (
-        <canvas
+        <div className="relative w-80 h-80 bg-white rounded-lg shadow-lg z-20 flex items-center justify-center">            <canvas
             width={SIZE * CELL_SIZE}
             height={SIZE * CELL_SIZE}
             ref={canvasRef}
         />
+        </div>
     );
 };
 
 export default MazeApplet;
+
+
+
+
