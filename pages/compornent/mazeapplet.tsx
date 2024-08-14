@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { MazeGenerator } from './mazegenerator';
-import MazeSolver from './mazesolver';
+// import MazeSolver from './mazesolver';
 import Maze from './maze';
 import Vector from "./Vector";
 
