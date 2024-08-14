@@ -14,7 +14,6 @@ interface Props {
     mode?: string
 }
 
-
 const MazeApplet: React.FC<Props> = ({ onFinish, mode }) => {
     const [maze, setMaze] = useState<Maze>();
     const [removedWalls, setRemovedWalls] = useState<{ x: number; y: number }[]>([]);
@@ -23,21 +22,9 @@ const MazeApplet: React.FC<Props> = ({ onFinish, mode }) => {
     const [shortestPath, setShortestPath] = useState<{ x: number; y: number }[]>([]);
     const [drawPathFlag, setDrawPathFlag] = useState(false);
     const [drawFlag, setDrawFlag] = useState(false);
-
-    // const [timerActive, setTimerActive] = useState(false); // Timer active state
-    // const [timerKey, setTimerKey] = useState<number>(0); // Key to reset Timer component
-
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
     useEffect(() => {
-        // const initializeMaze = () => {
-        //     const mazeInstance = new Maze();
-        //     mazeInstance.initialize(); // 状態を初期化する
-        //     return mazeInstance;
-        // };
-
-        // const mazeInstance = new Maze();
-        // mazeInstance.initialize(); // 状態を初期化する
         const mazeGenerator = new MazeGenerator();
         mazeGenerator.generate();
         const generatedMaze = mazeGenerator.getMaze();
@@ -70,7 +57,6 @@ const MazeApplet: React.FC<Props> = ({ onFinish, mode }) => {
 
 
     useEffect(() => {
-
         const canvas = canvasRef.current;
         if (canvas) {
             const ctx = canvas.getContext('2d');
@@ -86,7 +72,7 @@ const MazeApplet: React.FC<Props> = ({ onFinish, mode }) => {
         }
 
 
-    }, [playerPosition, playerTrail, shortestPath, drawPathFlag]);
+    }, [playerPosition, playerTrail, shortestPath, drawPathFlag, maze]);
 
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
