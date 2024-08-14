@@ -14,7 +14,7 @@ export default function Gameplay() {
     const router = useRouter(); // Initialize useRouter hook
     const searchParams = useSearchParams()
 
-    const mode = searchParams.get('mode')
+    const mode = searchParams.get('mode') || 'easy'; // Default to 'easy' if mode is not available
     console.log('mode', mode)
 
     const handleFinish = () => {
@@ -22,10 +22,9 @@ export default function Gameplay() {
     };
 
     const handleHomeClick = () => {
-        console.log('aaa');
+        // console.log('aaa');
         router.push('/home');
     };
-
 
     return (
         <div
@@ -34,7 +33,7 @@ export default function Gameplay() {
             {/* <div className="background-overlay"></div> */}
 
             {/* 大きな白い四角 */}
-            <MazeApplet onFinish={handleFinish} />
+            <MazeApplet mode={mode} onFinish={handleFinish} />
 
             {/* 右上にタイマー */}
             <Timer isGameOver={isGameOver} className="absolute top-4 right-4 z-30" />

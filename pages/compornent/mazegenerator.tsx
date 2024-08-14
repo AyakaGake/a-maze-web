@@ -2,6 +2,7 @@
 import Vector from '@/pages/compornent/Vector';
 import State from '@/pages/compornent/State';
 import Maze from '@/pages/compornent/maze';
+// import Mode from './mode';
 // import { assert } from '@/pages/compornent/assert'; // assert 関数をインポート
 
 
@@ -11,9 +12,9 @@ export class MazeGenerator {
     private solution: Vector[];
     private random: () => number;
 
-    constructor() {
-        this.maze = new Maze();
-        this.stateVisitedFlags = Array.from({ length: Maze.SIZE }, () => Array(Maze.SIZE).fill(false));
+    constructor(mode?: string) {
+        this.maze = new Maze(0, 0, mode);
+        this.stateVisitedFlags = Array.from({ length: this.maze.getSize() }, () => Array(this.maze.getSize()).fill(false));
         this.solution = [];
         this.random = () => Math.random();
     }
@@ -72,7 +73,7 @@ export class MazeGenerator {
             var npy = position.y + moveDirection.y;
 
             // 新しい位置が迷路の範囲内であることを確認
-            if (0 <= npx && npx < Maze.SIZE && 0 <= npy && npy < Maze.SIZE) {
+            if (0 <= npx && npx < this.maze.getSize() && 0 <= npy && npy < this.maze.getSize()) {
                 if (!this.stateVisitedFlags[npx][npy]) {
                     // 壁を壊す
                     var wallX = position.x + (moveDirection.x / 2);
@@ -87,7 +88,6 @@ export class MazeGenerator {
                 }
             }
         }
-
         return result;
     }
 

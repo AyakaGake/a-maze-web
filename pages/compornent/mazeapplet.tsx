@@ -4,8 +4,8 @@ import MazeSolver from './mazesolver';
 import Maze from './maze';
 import Vector from "./Vector";
 
-const SIZE = Maze.SIZE;
-const CELL_SIZE = Maze.CELL_SIZE;
+// const SIZE = maze.getSize();
+// const CELL_SIZE = maze.getcellSize();
 const START_POSITION = Maze.START;
 const GOAL_POSITION = Maze.GOAL;
 
@@ -22,13 +22,17 @@ const MazeApplet: React.FC<Props> = ({ onFinish, mode }) => {
     const [shortestPath, setShortestPath] = useState<{ x: number; y: number }[]>([]);
     const [drawPathFlag, setDrawPathFlag] = useState(false);
     const [drawFlag, setDrawFlag] = useState(false);
+    const [SIZE, setSize] = useState<number>(Maze.DEFAULT_SIZE);
+    const [CELL_SIZE, setCellSize] = useState<number>(Maze.DEFAULT_CELL_SIZE);
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
     useEffect(() => {
-        const mazeGenerator = new MazeGenerator();
+        const mazeGenerator = new MazeGenerator(mode);
         mazeGenerator.generate();
         const generatedMaze = mazeGenerator.getMaze();
         setMaze(generatedMaze);
+        setSize(generatedMaze.getSize());
+        setCellSize(generatedMaze.getCellSize());
 
         // Wall removal logic
         const removeWalls = () => {
@@ -46,15 +50,12 @@ const MazeApplet: React.FC<Props> = ({ onFinish, mode }) => {
             setRemovedWalls(walls);
         };
         removeWalls();
-
         // Optionally, solve maze and set shortest path
         // const mazeSolver = new MazeSolver(generatedMaze);
         // if (mazeSolver.solve()) {
         //     setShortestPath(mazeSolver.getSolution().map(v => ({ x: v.x, y: v.y })));
         // }
-
     }, []);
-
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -70,8 +71,6 @@ const MazeApplet: React.FC<Props> = ({ onFinish, mode }) => {
                 }
             }
         }
-
-
     }, [playerPosition, playerTrail, shortestPath, drawPathFlag, maze]);
 
     useEffect(() => {
@@ -101,7 +100,6 @@ const MazeApplet: React.FC<Props> = ({ onFinish, mode }) => {
                     break;
                 default:
                     break;
-
             }
         };
         window.addEventListener('keydown', handleKeyDown);
@@ -170,11 +168,9 @@ const MazeApplet: React.FC<Props> = ({ onFinish, mode }) => {
         console.log('move');
         const newX = playerPosition.x + dx;
         const newY = playerPosition.y + dy;
-
         // サイズとゴールの位置をインスタンスから取得
         // const SIZE = maze.SIZE;
         // const GOAL_POSITION = maze.GOAL;
-
         if (newX >= 0 && newX < SIZE && newY >= 0 && newY < SIZE && !maze?.getCell(newX, newY)) {
             setPlayerPosition({ x: newX, y: newY });
             setPlayerTrail(prevTrail => [...prevTrail, { x: newX, y: newY }]);

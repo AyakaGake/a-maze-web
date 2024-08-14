@@ -1,49 +1,52 @@
 import Vector from "./Vector";
-import State from '@/pages/compornent/State'
+// import State from '@/pages/compornent/State'
 
 export default class Maze {
     private cells: boolean[][];
     private removedWalls: Vector[] = []; // List to store removed walls
 
-    public static readonly SIZE: number = 31; // サイズを定義
-    public static readonly CELL_SIZE = 20;
+    public static readonly DEFAULT_SIZE: number = 31;
+    public static readonly DEFAULT_CELL_SIZE = 20;
     public static readonly START: Vector = { x: 1, y: 1 }; // スタート位置
-    public static readonly GOAL: Vector = new Vector(Maze.SIZE - 2, Maze.SIZE - 2); // ゴール位置
-    // public static readonly GOAL: Vector = new Vector((Maze.SIZE - 1) / 2, (Maze.SIZE - 1) / 2); // ゴール位置
+    public static readonly GOAL: Vector = new Vector(Maze.DEFAULT_SIZE - 2, Maze.DEFAULT_SIZE - 2); // ゴール位置
     public static readonly UP: Vector = new Vector(0, -2); // 上向きベクトル
     public static readonly RIGHT: Vector = new Vector(2, 0); // 右向きベクトル
     public static readonly DOWN: Vector = new Vector(0, 2); // 下向きベクトル
     public static readonly LEFT: Vector = new Vector(-2, 0); // 左向きベクトル
     public static readonly DIRECTIONS: Vector[] = [Maze.UP, Maze.RIGHT, Maze.DOWN, Maze.LEFT]; // 4方向
 
-    // コンストラクタ
-    // constructor() {
-    //     // SIZE x SIZE の 2D 配列を初期化、すべてのセルに壁があるとする
-    //     this.cells = Array.from({ length: Maze.SIZE }, () => Array(Maze.SIZE).fill(true));
+    private size: number;
+    private cellSize: number;
 
-    //     // 外周と奇数座標のセルに壁を配置する
-    //     for (let y = 0; y < Maze.SIZE; y++) {
-    //         for (let x = 0; x < Maze.SIZE; x++) {
-    //             if (x === 0 || x === Maze.SIZE - 1 || y === 0 || y === Maze.SIZE - 1 || !(x % 2 === 1 && y % 2 === 1)) {
-    //                 this.cells[y][x] = true; // Wall
-    //             } else {
-    //                 this.cells[y][x] = false; // Passage
-    //             }
-    //         }
-    //     }
-    // }
+    constructor(size: number = Maze.DEFAULT_SIZE, cellSize: number = Maze.DEFAULT_CELL_SIZE, mode?: string) {
+        switch (mode) {
+            case 'easy':
+                this.size = 31;
+                this.cellSize = 20;
+                break;
+            case 'hard':
+                this.size = 51;
+                this.cellSize = 13;
+                break;
+            case 'super-hard':
+                this.size = 71;
+                this.cellSize = 10;
+                break;
+            default:
+                this.size = size;
+                this.cellSize = cellSize;
+                break;
+        }
 
-
-    constructor() {
         // SIZE x SIZE の 2D 配列を初期化、すべてのセルに壁があるとする
-        this.cells = Array.from({ length: Maze.SIZE }, () => Array(Maze.SIZE).fill(true));
+        this.cells = Array.from({ length: this.size }, () => Array(this.size).fill(true));
         console.log(this.cells);
 
         // 外周と奇数座標のセルに壁を配置する
-        for (let y = 0; y < Maze.SIZE; y++) {
-            for (let x = 0; x < Maze.SIZE; x++) {
-                this.cells[y][x] = x == 0 || x == Maze.SIZE - 1 || y == 0 ||
-                    y == Maze.SIZE - 1 || !(x % 2 == 1 && y % 2 == 1);
+        for (let y = 0; y < this.size; y++) {
+            for (let x = 0; x < this.size; x++) {
+                this.cells[y][x] = x == 0 || x == this.size - 1 || y == 0 ||
+                    y == this.size - 1 || !(x % 2 == 1 && y % 2 == 1);
             }
         }
     }
@@ -78,7 +81,7 @@ export default class Maze {
 
     // セルの取得
     public getCell(x: number, y: number): boolean {
-        if (x < 0 || x >= Maze.SIZE || y < 0 || y >= Maze.SIZE) {
+        if (x < 0 || x >= this.size || y < 0 || y >= this.size) {
             throw new Error('Index out of bounds');
         }
         return this.cells[y][x];
@@ -86,7 +89,7 @@ export default class Maze {
 
     // セルの設定
     public setCell(x: number, y: number, value: boolean): void {
-        if (x < 0 || x >= Maze.SIZE || y < 0 || y >= Maze.SIZE) {
+        if (x < 0 || x >= this.size || y < 0 || y >= this.size) {
             throw new Error('Index out of bounds');
         }
         this.cells[y][x] = value;
@@ -100,4 +103,14 @@ export default class Maze {
     public getRemovedWalls(): Vector[] {
         return this.removedWalls;
     }
+
+    public getSize(): number {
+        return this.size;
+    }
+
+    public getCellSize(): number {
+        return this.cellSize;
+    }
+
+
 }
