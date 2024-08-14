@@ -6,9 +6,9 @@ export default class Maze {
     private removedWalls: Vector[] = []; // List to store removed walls
 
     public static readonly DEFAULT_SIZE: number = 31;
-    public static readonly DEFAULT_CELL_SIZE = 20;
+    public static readonly DEFAULT_CELL_SIZE: number = 20;
     public static readonly START: Vector = { x: 1, y: 1 }; // スタート位置
-    public static readonly GOAL: Vector = new Vector(Maze.DEFAULT_SIZE - 2, Maze.DEFAULT_SIZE - 2); // ゴール位置
+    public static readonly DEFAULT_GOAL: Vector = new Vector(Maze.DEFAULT_SIZE - 2, Maze.DEFAULT_SIZE - 2); // ゴール位置
     public static readonly UP: Vector = new Vector(0, -2); // 上向きベクトル
     public static readonly RIGHT: Vector = new Vector(2, 0); // 右向きベクトル
     public static readonly DOWN: Vector = new Vector(0, 2); // 下向きベクトル
@@ -17,24 +17,29 @@ export default class Maze {
 
     private size: number;
     private cellSize: number;
+    private goal: Vector;
 
     constructor(size: number = Maze.DEFAULT_SIZE, cellSize: number = Maze.DEFAULT_CELL_SIZE, mode?: string) {
         switch (mode) {
             case 'easy':
                 this.size = 31;
                 this.cellSize = 20;
+                this.goal = new Vector(this.size - 2, this.size - 2);
                 break;
             case 'hard':
                 this.size = 51;
                 this.cellSize = 13;
+                this.goal = new Vector(this.size - 2, this.size - 2);
                 break;
             case 'super-hard':
                 this.size = 71;
                 this.cellSize = 10;
+                this.goal = new Vector(this.size - 2, this.size - 2);
                 break;
             default:
                 this.size = size;
                 this.cellSize = cellSize;
+                this.goal = new Vector(this.size - 2, this.size - 2);
                 break;
         }
 
@@ -97,7 +102,7 @@ export default class Maze {
 
     // 現在の位置がゴールに到達したかをチェックする
     public checkSuccess(position: Vector): boolean {
-        return position.x === Maze.GOAL.x && position.y === Maze.GOAL.y;
+        return position.x === this.goal.x && position.y === this.goal.y;
     }
 
     public getRemovedWalls(): Vector[] {
@@ -110,6 +115,10 @@ export default class Maze {
 
     public getCellSize(): number {
         return this.cellSize;
+    }
+
+    public getGoal(): Vector {
+        return this.goal;
     }
 
 

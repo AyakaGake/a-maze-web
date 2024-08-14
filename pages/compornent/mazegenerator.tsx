@@ -92,6 +92,6 @@ export class MazeGenerator {
     }
 
     public generate(): void {
-        this.dfSearch(new State(Maze.GOAL));
+        this.dfSearch(new State(this.maze.getGoal()));
     }
 }

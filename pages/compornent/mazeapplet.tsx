@@ -7,7 +7,7 @@ import Vector from "./Vector";
 // const SIZE = maze.getSize();
 // const CELL_SIZE = maze.getcellSize();
 const START_POSITION = Maze.START;
-const GOAL_POSITION = Maze.GOAL;
+// const GOAL_POSITION = Maze.GOAL;
 
 interface Props {
     onFinish: () => void
@@ -24,6 +24,7 @@ const MazeApplet: React.FC<Props> = ({ onFinish, mode }) => {
     const [drawFlag, setDrawFlag] = useState(false);
     const [SIZE, setSize] = useState<number>(Maze.DEFAULT_SIZE);
     const [CELL_SIZE, setCellSize] = useState<number>(Maze.DEFAULT_CELL_SIZE);
+    const [goal, setGoal] = useState<Vector>(Maze.DEFAULT_GOAL);
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
     useEffect(() => {
@@ -33,6 +34,7 @@ const MazeApplet: React.FC<Props> = ({ onFinish, mode }) => {
         setMaze(generatedMaze);
         setSize(generatedMaze.getSize());
         setCellSize(generatedMaze.getCellSize());
+        setGoal(generatedMaze.getGoal());
 
         // Wall removal logic
         const removeWalls = () => {
@@ -55,7 +57,7 @@ const MazeApplet: React.FC<Props> = ({ onFinish, mode }) => {
         // if (mazeSolver.solve()) {
         //     setShortestPath(mazeSolver.getSolution().map(v => ({ x: v.x, y: v.y })));
         // }
-    }, []);
+    }, [mode]);
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -120,7 +122,7 @@ const MazeApplet: React.FC<Props> = ({ onFinish, mode }) => {
         ctx.fillStyle = 'cyan';
         ctx.fillRect(START_POSITION.x * CELL_SIZE, START_POSITION.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
         ctx.fillStyle = 'green';
-        ctx.fillRect(GOAL_POSITION.x * CELL_SIZE, GOAL_POSITION.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+        ctx.fillRect(goal.x * CELL_SIZE, goal.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
         ctx.fillStyle = 'gray';
         removedWalls.forEach(w => ctx.fillRect(w.x * CELL_SIZE, w.y * CELL_SIZE, CELL_SIZE, CELL_SIZE));
     };
@@ -174,7 +176,7 @@ const MazeApplet: React.FC<Props> = ({ onFinish, mode }) => {
         if (newX >= 0 && newX < SIZE && newY >= 0 && newY < SIZE && !maze?.getCell(newX, newY)) {
             setPlayerPosition({ x: newX, y: newY });
             setPlayerTrail(prevTrail => [...prevTrail, { x: newX, y: newY }]);
-            if (newX === GOAL_POSITION.x && newY === GOAL_POSITION.y) {
+            if (newX === goal.x && newY === goal.y) {
                 setDrawPathFlag(true);
                 onFinish(); // ゴールに到達したときの処理
             }
