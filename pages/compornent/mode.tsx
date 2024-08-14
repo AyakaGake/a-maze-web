@@ -13,7 +13,7 @@ export default function Mode() {
     const handleSubmit = () => {
         console.log("Start");
         router.push({
-            pathname: '/home/gameplay',
+            pathname: '/gameplay',
             query: { mode: selectedMode }
         });
     };

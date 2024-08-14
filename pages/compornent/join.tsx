@@ -4,7 +4,7 @@ export default function Join() {
     const handleSubmit = () => {
         console.log("Join");
         // TODO: navigate to gameplay page;
-        router.push('/home/gameplay');
+        router.push('/gameplay');
     };
 
     return (
