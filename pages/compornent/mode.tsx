@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router';
 import { useState } from 'react';
+import { v4 } from 'uuid'
 
 // const logFunction = () => {
 //     console.log("Start");
@@ -12,8 +13,10 @@ export default function Mode() {
 
     const handleSubmit = () => {
         console.log("Start");
+        const id = v4();
+        // console.log(id)
         router.push({
-            pathname: '/gameplay',
+            pathname: `/gameplay/${id}`,
             query: { mode: selectedMode }
         });
     };

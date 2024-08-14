@@ -23,7 +23,7 @@ export default function Gameplay() {
 
     const handleHomeClick = () => {
         // console.log('aaa');
-        router.push('/');
+        router.push('\/');
     };
 
     return (
