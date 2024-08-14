@@ -33,9 +33,11 @@ export default class Maze {
     //     }
     // }
 
+
     constructor() {
         // SIZE x SIZE の 2D 配列を初期化、すべてのセルに壁があるとする
         this.cells = Array.from({ length: Maze.SIZE }, () => Array(Maze.SIZE).fill(true));
+        console.log(this.cells);
 
         // 外周と奇数座標のセルに壁を配置する
         for (let y = 0; y < Maze.SIZE; y++) {
@@ -45,10 +47,6 @@ export default class Maze {
             }
         }
     }
-
-
-
-
 
     // private initializeWalls(): void {
     //     for (let y = 0; y < Maze.SIZE; y++) {
@@ -62,21 +60,21 @@ export default class Maze {
     //     }
     // }
 
-    private removeWallsAtRandom(): void {
-        this.removedWalls = []; // Clear previously removed walls
-        const random = Math.random;
+    // private removeWallsAtRandom(): void {
+    //     this.removedWalls = []; // Clear previously removed walls
+    //     const random = Math.random;
 
-        for (let y = 1; y < Maze.SIZE - 1; y++) {
-            for (let x = 1; x < Maze.SIZE - 1; x++) {
-                if (((x % 2 === 0 && y % 2 === 1) ||
-                    (x % 2 === 1 && y % 2 === 0)) &&
-                    this.cells[y][x] && random() < 0.01) { // 1% chance
-                    this.removedWalls.push({ x, y });
-                    this.cells[y][x] = false; // Remove wall
-                }
-            }
-        }
-    }
+    //     for (let y = 1; y < Maze.SIZE - 1; y++) {
+    //         for (let x = 1; x < Maze.SIZE - 1; x++) {
+    //             if (((x % 2 === 0 && y % 2 === 1) ||
+    //                 (x % 2 === 1 && y % 2 === 0)) &&
+    //                 this.cells[y][x] && random() < 0.01) { // 1% chance
+    //                 this.removedWalls.push({ x, y });
+    //                 this.cells[y][x] = false; // Remove wall
+    //             }
+    //         }
+    //     }
+    // }
 
     // セルの取得
     public getCell(x: number, y: number): boolean {

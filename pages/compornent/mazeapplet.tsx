@@ -15,10 +15,8 @@ interface Props {
 }
 
 
-
-
 const MazeApplet: React.FC<Props> = ({ onFinish, mode }) => {
-    const [maze, setMaze] = useState<Maze>(new Maze());
+    const [maze, setMaze] = useState<Maze>();
     const [removedWalls, setRemovedWalls] = useState<{ x: number; y: number }[]>([]);
     const [playerPosition, setPlayerPosition] = useState(START_POSITION);
     const [playerTrail, setPlayerTrail] = useState<{ x: number; y: number }[]>([START_POSITION]);
@@ -130,7 +128,7 @@ const MazeApplet: React.FC<Props> = ({ onFinish, mode }) => {
         ctx.fillStyle = 'black';
         for (let y = 0; y < SIZE; y++) {
             for (let x = 0; x < SIZE; x++) {
-                if (maze.getCell(x, y)) {
+                if (maze?.getCell(x, y)) {
                     ctx.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
                 }
             }
@@ -191,7 +189,7 @@ const MazeApplet: React.FC<Props> = ({ onFinish, mode }) => {
         // const SIZE = maze.SIZE;
         // const GOAL_POSITION = maze.GOAL;
 
-        if (newX >= 0 && newX < SIZE && newY >= 0 && newY < SIZE && !maze.getCell(newX, newY)) {
+        if (newX >= 0 && newX < SIZE && newY >= 0 && newY < SIZE && !maze?.getCell(newX, newY)) {
             setPlayerPosition({ x: newX, y: newY });
             setPlayerTrail(prevTrail => [...prevTrail, { x: newX, y: newY }]);
             if (newX === GOAL_POSITION.x && newY === GOAL_POSITION.y) {
