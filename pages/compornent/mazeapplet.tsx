@@ -3,6 +3,9 @@ import { MazeGenerator } from './mazegenerator';
 // import MazeSolver from './mazesolver';
 import Maze from './maze';
 import Vector from "./Vector";
+import { mazeMockData } from '../gameplay/[gameId]/constant';
+
+
 
 // const SIZE = maze.getSize();
 // const CELL_SIZE = maze.getcellSize();
@@ -15,7 +18,7 @@ interface Props {
 }
 
 const MazeApplet: React.FC<Props> = ({ onFinish, mode }) => {
-    const [maze, setMaze] = useState<Maze>();
+    // const [maze, setMaze] = useState<Maze>();
     const [removedWalls, setRemovedWalls] = useState<{ x: number; y: number }[]>([]);
     const [playerPosition, setPlayerPosition] = useState(START_POSITION);
     const [playerTrail, setPlayerTrail] = useState<{ x: number; y: number }[]>([START_POSITION]);
@@ -27,14 +30,23 @@ const MazeApplet: React.FC<Props> = ({ onFinish, mode }) => {
     const [goal, setGoal] = useState<Vector>(Maze.DEFAULT_GOAL);
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
+    const [maze, setMaze] = useState({
+        cells: mazeMockData.cells,
+        size: mazeMockData.size,
+        cellSize: mazeMockData.cellSize,
+    });
+
     useEffect(() => {
-        const mazeGenerator = new MazeGenerator(mode);
-        mazeGenerator.generate();
-        const generatedMaze = mazeGenerator.getMaze();
-        setMaze(generatedMaze);
-        setSize(generatedMaze.getSize());
-        setCellSize(generatedMaze.getCellSize());
-        setGoal(generatedMaze.getGoal());
+        // const mazeGenerator = new MazeGenerator(mode);
+        // mazeGenerator.generate();
+        // const generatedMaze = mazeGenerator.getMaze();
+        // setMaze(generatedMaze);
+        // setSize(generatedMaze.getSize());
+        // setCellSize(generatedMaze.getCellSize());
+        // setGoal(generatedMaze.getGoal());
+
+
+
 
         // Wall removal logic
         const removeWalls = () => {
@@ -43,21 +55,28 @@ const MazeApplet: React.FC<Props> = ({ onFinish, mode }) => {
             for (let y = 1; y < SIZE - 1; y++) {
                 for (let x = 1; x < SIZE - 1; x++) {
                     if (((x % 2 === 0 && y % 2 === 1) || (x % 2 === 1 && y % 2 === 0)) &&
-                        generatedMaze.getCell(x, y) && random() < 0.1) { // Adjust probability if needed
+                        maze.cells[x][y] && random() < 0.1) { // Adjust probability if needed
                         walls.push({ x, y });
-                        generatedMaze.setCell(x, y, false);
+                        maze.cells[y][x] = false;
                     }
                 }
             }
             setRemovedWalls(walls);
         };
         removeWalls();
+
+
+
+
+
+
         // Optionally, solve maze and set shortest path
         // const mazeSolver = new MazeSolver(generatedMaze);
         // if (mazeSolver.solve()) {
         //     setShortestPath(mazeSolver.getSolution().map(v => ({ x: v.x, y: v.y })));
         // }
     }, [mode]);
+
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -114,7 +133,7 @@ const MazeApplet: React.FC<Props> = ({ onFinish, mode }) => {
         ctx.fillStyle = 'black';
         for (let y = 0; y < SIZE; y++) {
             for (let x = 0; x < SIZE; x++) {
-                if (maze?.getCell(x, y)) {
+                if (maze?.cells[y][x]) {
                     ctx.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
                 }
             }
@@ -197,3 +216,6 @@ const MazeApplet: React.FC<Props> = ({ onFinish, mode }) => {
 };
 
 export default MazeApplet;
+
+
+
