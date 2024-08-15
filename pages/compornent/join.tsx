@@ -1,17 +1,21 @@
-import router, { useRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import { useState } from 'react';
 
 export default function Join() {
     const [playerName, setPlayerName] = useState<string>(''); // State for player name
-
+    const router = useRouter(); // Correctly get the router instance
 
     const handleSubmit = () => {
         console.log("Join");
-        // TODO: navigate to gameplay page;
-        sessionStorage.setItem('playerName', playerName);
-        router.push('/gameplay');
-    };
+        const roomId = '2ee29d88-44d1-4b6e-a92c-ace66ba20982'; // Example roomId
 
+        // Store player name and roomId in sessionStorage
+        sessionStorage.setItem('playerName', playerName);
+        sessionStorage.setItem('roomId', roomId); // Store roomId
+
+        // Navigate to gameplay page with roomId
+        router.push(`/gameplay/${roomId}`);
+    };
 
     return (
         <div className="flex flex-col items-center justify-center border border-white rounded-lg p-4 bg-white w-80">
@@ -22,6 +26,7 @@ export default function Join() {
                 type='text'
                 placeholder='Enter room ID'
                 className='border border-gray-300 rounded bg-white p-2 w-full mb-4 text-black-800 focus:border-gray-500'
+            // If you want to capture roomId from input, use state here
             />
             <input
                 type='text'

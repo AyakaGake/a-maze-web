@@ -1,6 +1,9 @@
+import { supabase } from '@/utils/supabase';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { v4 } from 'uuid'
+// import { v4 as uuidv4 } from 'uuid';
+
 
 // const logFunction = () => {
 //     console.log("Start");
@@ -12,21 +15,36 @@ export default function Mode() {
     const [selectedMode, setSelectedMode] = useState<string>('easy'); // Default to 'easy'
     const [playerName, setPlayerName] = useState<string>(''); // State for player name
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         console.log("Start");
         const id = v4();
         // console.log(id)
 
         sessionStorage.setItem('playerName', playerName);
+        sessionStorage.setItem('selectedMode', selectedMode);
 
         router.push({
-            pathname: `/gameplay/${id}`,
-            query: { mode: selectedMode }
+            pathname: `/for-waiting`,
+            // query: { mode: selectedMode }
         });
+        // router.push({
+        //     pathname: `/gameplay/${id}`,
+        //     query: { mode: selectedMode }
+        // });
         // router.replace({
         //     pathname: `/gameplay/${id}`,
         //     query: { mode: selectedMode }
         // });
+
+
+        const { data, error } = await supabase
+            .from('maze-game-table')
+            .insert([
+                { room_id: id, maze_data: 'otherValue' }
+                // { room_id: id, maze_data: 'otherValue' },
+            ])
+            .select()
+
     };
 
     return (

@@ -7,7 +7,7 @@ export default class Maze {
 
     public static readonly DEFAULT_SIZE: number = 31;
     public static readonly DEFAULT_CELL_SIZE: number = 20;
-    public static readonly START: Vector = { x: 1, y: 1 }; // スタート位置
+    public static readonly START: Vector = new Vector(1, 1); // スタート位置
     public static readonly DEFAULT_GOAL: Vector = new Vector(Maze.DEFAULT_SIZE - 2, Maze.DEFAULT_SIZE - 2); // ゴール位置
     public static readonly UP: Vector = new Vector(0, -2); // 上向きベクトル
     public static readonly RIGHT: Vector = new Vector(2, 0); // 右向きベクトル
@@ -105,6 +105,11 @@ export default class Maze {
         return position.x === this.goal.x && position.y === this.goal.y;
     }
 
+    // スタート位置を取得するメソッドを追加
+    public getStart(): Vector {
+        return Maze.START;
+    }
+
     public getRemovedWalls(): Vector[] {
         return this.removedWalls;
     }
@@ -120,6 +125,4 @@ export default class Maze {
     public getGoal(): Vector {
         return this.goal;
     }
-
-
 }
