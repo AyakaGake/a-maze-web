@@ -2,20 +2,39 @@ import { Inter } from "next/font/google";
 import Timer from "@/pages/compornent/timer";
 import Ranking from "@/pages/compornent/ranking";
 import MazeApplet from "@/pages/compornent/mazeapplet";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import router, { useRouter } from 'next/router';
 import { useSearchParams } from 'next/navigation'
 
 const inter = Inter({ subsets: ["latin"] });
 
+
+
 export default function Gameplay() {
     const [isGameOver, setIsGameOver] = useState<boolean>(false);
     const [result, setResult] = useState<number>(0);
+    const [playerName, setPlayerName] = useState<string | null>(null);
+
     const router = useRouter(); // Initialize useRouter hook
     const searchParams = useSearchParams()
 
     const mode = searchParams.get('mode') || 'easy'; // Default to 'easy' if mode is not available
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const storedName = sessionStorage.getItem('playerName');
+            setPlayerName(storedName || 'unknown'); // Default to 'unknown' if no value is found
+        }
+    }, []);
+    // const [playerName, setPlayerName] = useState<string>(() => {
+    //     if (typeof window !== 'undefined') {
+    //         const storedName = sessionStorage.getItem('playerName');
+    //         return storedName || 'unknown'; // Default to 'unknown' if no value is found
+    //     }
+    //     return 'unknown'; // Server-side fallback
+    // });
+
     console.log('mode', mode)
+    console.log('playerName', playerName)
 
     const handleFinish = () => {
         setIsGameOver(true);
@@ -48,6 +67,13 @@ export default function Gameplay() {
             >
                 Home
             </button>
+            {/* プレイヤー名を左下に表示 */}
+            <div
+                className="absolute bottom-4 left-4 text-white font-bold mb-1 text-3xl z-30"
+                style={{ zIndex: 20 }}
+            >
+                Player: {playerName}
+            </div>
         </div>
 
     );

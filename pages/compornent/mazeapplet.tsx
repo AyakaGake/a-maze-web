@@ -192,7 +192,7 @@ const MazeApplet: React.FC<Props> = ({ onFinish, mode }) => {
         // サイズとゴールの位置をインスタンスから取得
         // const SIZE = maze.SIZE;
         // const GOAL_POSITION = maze.GOAL;
-        if (newX >= 0 && newX < SIZE && newY >= 0 && newY < SIZE && !maze?.getCell(newX, newY)) {
+        if (newX >= 0 && newX < SIZE && newY >= 0 && newY < SIZE && !maze?.cells[newY][newX]) {
             setPlayerPosition({ x: newX, y: newY });
             setPlayerTrail(prevTrail => [...prevTrail, { x: newX, y: newY }]);
             if (newX === goal.x && newY === goal.y) {
@@ -201,6 +201,7 @@ const MazeApplet: React.FC<Props> = ({ onFinish, mode }) => {
             }
         }
     };
+
 
     return (
         <div className="relative flex items-center justify-center" style={{ width: SIZE * CELL_SIZE, height: SIZE * CELL_SIZE }}>
@@ -216,6 +217,3 @@ const MazeApplet: React.FC<Props> = ({ onFinish, mode }) => {
 };
 
 export default MazeApplet;
-
-
-
