@@ -1,5 +1,4 @@
 import Vector from "./Vector";
-// import State from '@/pages/compornent/State'
 
 export default class Maze {
     private cells: boolean[][];
@@ -55,34 +54,6 @@ export default class Maze {
             }
         }
     }
-
-    // private initializeWalls(): void {
-    //     for (let y = 0; y < Maze.SIZE; y++) {
-    //         for (let x = 0; x < Maze.SIZE; x++) {
-    //             if (x === 0 || x === Maze.SIZE - 1 || y === 0 || y === Maze.SIZE - 1 || !(x % 2 === 1 && y % 2 === 1)) {
-    //                 this.cells[y][x] = true; // Wall
-    //             } else {
-    //                 this.cells[y][x] = false; // Passage
-    //             }
-    //         }
-    //     }
-    // }
-
-    // private removeWallsAtRandom(): void {
-    //     this.removedWalls = []; // Clear previously removed walls
-    //     const random = Math.random;
-
-    //     for (let y = 1; y < Maze.SIZE - 1; y++) {
-    //         for (let x = 1; x < Maze.SIZE - 1; x++) {
-    //             if (((x % 2 === 0 && y % 2 === 1) ||
-    //                 (x % 2 === 1 && y % 2 === 0)) &&
-    //                 this.cells[y][x] && random() < 0.01) { // 1% chance
-    //                 this.removedWalls.push({ x, y });
-    //                 this.cells[y][x] = false; // Remove wall
-    //             }
-    //         }
-    //     }
-    // }
 
     // セルの取得
     public getCell(x: number, y: number): boolean {

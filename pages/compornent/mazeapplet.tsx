@@ -3,21 +3,14 @@ import { MazeGenerator } from './mazegenerator';
 // import MazeSolver from './mazesolver';
 import Maze from './maze';
 import Vector from "./Vector";
-import { mazeMockData } from '../gameplay/[gameId]/constant';
 import { fetchMazeData } from './fetchMazeData';
-
-// const SIZE = maze.getSize();
-// const CELL_SIZE = maze.getcellSize();
-// const START_POSITION = Maze.START;
-// const GOAL_POSITION = Maze.GOAL;
 
 interface Props {
     onFinish: () => void
-    mode?: string
+    roomId: string;
 }
 
-const MazeApplet: React.FC<Props> = ({ onFinish, mode }) => {
-    // const [maze, setMaze] = useState<Maze>();
+const MazeApplet: React.FC<Props> = ({ roomId, onFinish }) => {
     const [removedWalls, setRemovedWalls] = useState<{ x: number; y: number }[]>([]);
     const [playerPosition, setPlayerPosition] = useState<Vector>(new Vector(1, 1));
     const [playerTrail, setPlayerTrail] = useState<{ x: number; y: number }[]>([{ x: 1, y: 1 }]);
@@ -32,21 +25,7 @@ const MazeApplet: React.FC<Props> = ({ onFinish, mode }) => {
 
     const [maze, setMaze] = useState<{ cells: boolean[][]; size: number; cellSize: number } | null>(null);
 
-    // const [maze, setMaze] = useState({
-    //     cells: mazeMockData.cells,
-    //     size: mazeMockData.size,
-    //     cellSize: mazeMockData.cellSize,
-    // });
-
     useEffect(() => {
-        // const mazeGenerator = new MazeGenerator(mode);
-        // mazeGenerator.generate();
-        // const generatedMaze = mazeGenerator.getMaze();
-        // setMaze(generatedMaze);
-        // setSize(generatedMaze.getSize());
-        // setCellSize(generatedMaze.getCellSize());
-        // setGoal(generatedMaze.getGoal());
-
         // Wall removal logic
         // const removeWalls = () => {
         //     const walls: { x: number; y: number }[] = [];
@@ -62,27 +41,30 @@ const MazeApplet: React.FC<Props> = ({ onFinish, mode }) => {
         //     }
         //     setRemovedWalls(walls);
         // };
-        const fetchAndSetMazeData = async () => {
-            const roomId = '4130f99c-191d-49ee-9d9a-be906cf198e6'; // 実際の roomId を設定
-            const mazeData = await fetchMazeData(roomId);
+        const fetchAndSetMazeData = async (roomId: string) => {
+            // const roomId = '4130f99c-191d-49ee-9d9a-be906cf198e6'; // 実際の roomId を設定
+            if (roomId) {
 
-            if (mazeData) {
-                setMaze({
-                    cells: mazeData.cells,
-                    size: mazeData.size,
-                    cellSize: mazeData.cellSize,
-                });
-                setSize(mazeData.size);
-                setCellSize(mazeData.cellSize);
-                setGoal(new Vector(mazeData.goal.x, mazeData.goal.y));
-                setStart(new Vector(mazeData.start.x, mazeData.start.y));
-                // removedWalls を設定する場合はここに追加の処理を行う
-                setRemovedWalls([]); // 例: empty array for now
+                const mazeData = await fetchMazeData(roomId);
+
+                if (mazeData) {
+                    setMaze({
+                        cells: mazeData.cells,
+                        size: mazeData.size,
+                        cellSize: mazeData.cellSize,
+                    });
+                    setSize(mazeData.size);
+                    setCellSize(mazeData.cellSize);
+                    setGoal(new Vector(mazeData.goal.x, mazeData.goal.y));
+                    setStart(new Vector(mazeData.start.x, mazeData.start.y));
+                    // removedWalls を設定する場合はここに追加の処理を行う
+                    setRemovedWalls([]); // 例: empty array for now
+                }
             }
         };
 
-        fetchAndSetMazeData();
-    }, [mode]);
+        fetchAndSetMazeData(roomId);
+    }, [roomId]);
 
     //     const removeWalls = () => {
     //         const newCells = cells.map((row: any[]) => row.slice()); // Deep copy of the maze cells
@@ -221,8 +203,6 @@ const MazeApplet: React.FC<Props> = ({ onFinish, mode }) => {
         const newX = playerPosition.x + dx;
         const newY = playerPosition.y + dy;
         // サイズとゴールの位置をインスタンスから取得
-        // const SIZE = maze.SIZE;
-        // const GOAL_POSITION = maze.GOAL;
         if (newX >= 0 && newX < SIZE && newY >= 0 && newY < SIZE && !maze?.cells[newY][newX]) {
             setPlayerPosition(new Vector(newX, newY));
             setPlayerTrail(prevTrail => [...prevTrail, { x: newX, y: newY }]);

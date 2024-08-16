@@ -2,9 +2,6 @@
 import Vector from '@/pages/compornent/Vector';
 import State from '@/pages/compornent/State';
 import Maze from '@/pages/compornent/maze';
-// import Mode from './mode';
-// import { assert } from '@/pages/compornent/assert'; // assert 関数をインポート
-
 
 export class MazeGenerator {
     private maze: Maze;
@@ -119,8 +116,6 @@ export class MazeGenerator {
         this.dfSearch(new State(this.maze.getGoal()));
     }
 
-    // MazeMockData形式でデータを取得
-    // MazeGenerator.ts
     public getMazeMockData(): any {
         return {
             size: this.maze.getSize(),
@@ -130,5 +125,4 @@ export class MazeGenerator {
             cells: this.maze // 迷路の状態（壁が削除された位置など）
         };
     }
-
 }

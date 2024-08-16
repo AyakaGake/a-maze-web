@@ -9,8 +9,9 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-export const generateAndSaveMaze = async () => {
-    const mazeGenerator = new MazeGenerator('easy'); // モードを指定
+export const generateAndSaveMaze = async (mode: string, roomId: string) => {
+    console.log("Selected Mode(genrateAndSave):", mode);
+    const mazeGenerator = new MazeGenerator(mode); // モードを指定
     mazeGenerator.generate();
 
     const mazeData = mazeGenerator.getMazeMockData();
@@ -23,8 +24,6 @@ export const generateAndSaveMaze = async () => {
     };
 
     const mazeDataJson = JSON.stringify(serializedMazeData);
-
-    const roomId = uuidv4(); // UUIDを生成
 
     // Supabase に保存
     const { data, error } = await supabase

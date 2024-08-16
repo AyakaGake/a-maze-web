@@ -1030,3 +1030,19 @@ export const mazeMockData = {
     ]
     ],
 };
+
+
+// JSON に変換するためのユーティリティ関数
+const serializeVector = (vector: Vector) => ({
+    x: vector.x,
+    y: vector.y
+});
+
+const serializedMazeMockData = {
+    ...mazeMockData,
+    start: serializeVector(mazeMockData.start),
+    goal: serializeVector(mazeMockData.goal),
+};
+
+const mazeMockDataJson = JSON.stringify(serializedMazeMockData);
+

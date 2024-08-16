@@ -8,17 +8,15 @@ import { useSearchParams } from 'next/navigation'
 
 const inter = Inter({ subsets: ["latin"] });
 
-
-
 export default function Gameplay() {
     const [isGameOver, setIsGameOver] = useState<boolean>(false);
     const [result, setResult] = useState<number>(0);
     const [playerName, setPlayerName] = useState<string | null>(null);
 
     const router = useRouter(); // Initialize useRouter hook
+    const { roomId } = router.query;
     const searchParams = useSearchParams()
 
-    const mode = searchParams.get('mode') || 'easy'; // Default to 'easy' if mode is not available
     useEffect(() => {
         if (typeof window !== 'undefined') {
             const storedName = sessionStorage.getItem('playerName');
@@ -33,8 +31,9 @@ export default function Gameplay() {
     //     return 'unknown'; // Server-side fallback
     // });
 
-    console.log('mode', mode)
+    // console.log('mode(gameplay)', mode)
     console.log('playerName', playerName)
+    console.log('roomId', roomId)
 
     const handleFinish = () => {
         setIsGameOver(true);
@@ -52,7 +51,7 @@ export default function Gameplay() {
             {/* <div className="background-overlay"></div> */}
 
             {/* 大きな白い四角 */}
-            <MazeApplet mode={mode} onFinish={handleFinish} />
+            <MazeApplet roomId={roomId as string} onFinish={handleFinish} />
 
             {/* 右上にタイマー */}
             <Timer isGameOver={isGameOver} className="absolute top-4 right-4 z-30" />
