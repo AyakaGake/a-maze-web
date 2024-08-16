@@ -5,42 +5,62 @@ import MazeApplet from "@/pages/compornent/mazeapplet";
 import { useEffect, useState } from "react";
 import router, { useRouter } from 'next/router';
 import { useSearchParams } from 'next/navigation'
+import { supabase } from "@/utils/supabase";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Gameplay() {
     const [isGameOver, setIsGameOver] = useState<boolean>(false);
-    const [result, setResult] = useState<number>(0);
     const [playerName, setPlayerName] = useState<string | null>(null);
+    const [playerId, setPlayerId] = useState<string | null>(null);
 
     const router = useRouter(); // Initialize useRouter hook
     const { roomId } = router.query;
-    const searchParams = useSearchParams()
+    // const playerId = sessionStorage.getItem('playerId');
 
-    useEffect(() => {
-        if (typeof window !== 'undefined') {
-            const storedName = sessionStorage.getItem('playerName');
-            setPlayerName(storedName || 'unknown'); // Default to 'unknown' if no value is found
-        }
-    }, []);
-    // const [playerName, setPlayerName] = useState<string>(() => {
+    // const searchParams = useSearchParams()
+
+    // useEffect(() => {
     //     if (typeof window !== 'undefined') {
     //         const storedName = sessionStorage.getItem('playerName');
-    //         return storedName || 'unknown'; // Default to 'unknown' if no value is found
+    //         setPlayerName(storedName || 'unknown'); // Default to 'unknown' if no value is found
     //     }
-    //     return 'unknown'; // Server-side fallback
-    // });
+    // }, []);
 
-    // console.log('mode(gameplay)', mode)
+    useEffect(() => {
+        const storedName = sessionStorage.getItem('playerName');
+        const storedId = sessionStorage.getItem('playerId');
+        setPlayerName(storedName || 'unknown');
+        setPlayerId(storedId || null);
+    }, []);
+
     console.log('playerName', playerName)
     console.log('roomId', roomId)
+    console.log('playerId', playerId)
 
-    const handleFinish = () => {
+    const handleFinish = async (clearTime: number) => {
         setIsGameOver(true);
+        console.log('Game cleared in', clearTime, 'seconds');
+
+        const { data, error } = await supabase
+            .from('game-player-table')
+            .update({
+                clear_time: clearTime
+            })
+            .match({
+                room_id: roomId,
+                // player_id: playerId,
+                // player_name: playerName
+            });
+
+        if (error) {
+            console.error('Error saving clear time:', error);
+        } else {
+            console.log('Clear time saved successfully:', data);
+        }
     };
 
     const handleHomeClick = () => {
-        // console.log('aaa');
         router.push('\/');
     };
 
@@ -50,7 +70,6 @@ export default function Gameplay() {
         >
             {/* <div className="background-overlay"></div> */}
 
-            {/* 大きな白い四角 */}
             <MazeApplet roomId={roomId as string} onFinish={handleFinish} />
 
             {/* 右上にタイマー */}
@@ -60,7 +79,8 @@ export default function Gameplay() {
             <Ranking className="absolute bottom-4 right-4 z-30" />
 
             {/* ホームスクリーンに戻るボタン */}
-            <button type="button"
+            <button
+                type="button"
                 onClick={handleHomeClick}
                 className="absolute bottom-4 center-4 px-4 py-2 bg-red-600 rounded text-white hover:bg-red-700 z-100000"
             >

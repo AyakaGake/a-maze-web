@@ -1,20 +1,33 @@
+import { supabase } from '@/utils/supabase';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 
 export default function Join() {
     const [playerName, setPlayerName] = useState<string>(''); // State for player name
+    const [roomId, setRoomId] = useState<string>(''); // State for roomId
     const router = useRouter(); // Correctly get the router instance
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         console.log("Join");
-        const roomId = '2ee29d88-44d1-4b6e-a92c-ace66ba20982'; // Example roomId
-
-        // Store player name and roomId in sessionStorage
         sessionStorage.setItem('playerName', playerName);
-        sessionStorage.setItem('roomId', roomId); // Store roomId
 
-        // Navigate to gameplay page with roomId
-        router.push(`/gameplay/${roomId}`);
+        const { data, error } = await supabase
+            .from('game-player-table')
+            .insert([
+                {
+                    room_id: roomId,
+                    player_name: playerName,
+                    created_at: new Date().toISOString()
+                }
+            ])
+            .select();
+
+        if (error) {
+            console.error('Error inserting data to game_player_table:', error);
+            return;
+        }
+
+        router.push({ pathname: `/lobby/${roomId}`, });
     };
 
     return (
@@ -26,7 +39,8 @@ export default function Join() {
                 type='text'
                 placeholder='Enter room ID'
                 className='border border-gray-300 rounded bg-white p-2 w-full mb-4 text-black-800 focus:border-gray-500'
-            // If you want to capture roomId from input, use state here
+                value={roomId}
+                onChange={(ev) => setRoomId(ev.target.value)} // Update roomId state
             />
             <input
                 type='text'

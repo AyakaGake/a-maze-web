@@ -1,14 +1,7 @@
 import { supabase } from '@/utils/supabase';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-// import { v4 } from 'uuid'
 import { v4 as uuidv4 } from 'uuid';
-
-
-// const logFunction = () => {
-//     console.log("Start");
-//     // TODO: navigate to gameplay page
-// };
 
 export default function Mode() {
     const router = useRouter();
@@ -18,12 +11,30 @@ export default function Mode() {
     const handleSubmit = async () => {
         const roomId = uuidv4();
         console.log("Start");
-        // const id = v4();
-        // console.log(id)
+        const playerId = uuidv4();
+        console.log("playerId: ", playerId);
 
         sessionStorage.setItem('playerName', playerName);
         sessionStorage.setItem('selectedMode', selectedMode);
         sessionStorage.setItem('roomId', roomId); // Save roomId to sessionStorage
+        sessionStorage.setItem('playerId', playerId);
+
+        const { data, error } = await supabase
+            .from('game-player-table')
+            .insert([
+                {
+                    player_id: playerId,
+                    room_id: roomId,
+                    player_name: playerName,
+                    created_at: new Date().toISOString()
+                }
+            ])
+            .select();
+
+        if (error) {
+            console.error('Error inserting data to game_player_table:', error);
+            return;
+        }
 
         router.push({
             pathname: `/lobby/${roomId}`,

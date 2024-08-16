@@ -6,7 +6,7 @@ import Vector from "./Vector";
 import { fetchMazeData } from './fetchMazeData';
 
 interface Props {
-    onFinish: () => void
+    onFinish: (clearTime: number) => void
     roomId: string;
 }
 
@@ -23,9 +23,13 @@ const MazeApplet: React.FC<Props> = ({ roomId, onFinish }) => {
     const [start, setStart] = useState<Vector>(new Vector(0, 0));
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
+    const [startTime, setStartTime] = useState<number | null>(null);
+    const [endTime, setEndTime] = useState<number | null>(null);
+
     const [maze, setMaze] = useState<{ cells: boolean[][]; size: number; cellSize: number } | null>(null);
 
     useEffect(() => {
+        setStartTime(Date.now()); // ゲーム開始時の時間を記録
         // Wall removal logic
         // const removeWalls = () => {
         //     const walls: { x: number; y: number }[] = [];
@@ -62,7 +66,6 @@ const MazeApplet: React.FC<Props> = ({ roomId, onFinish }) => {
                 }
             }
         };
-
         fetchAndSetMazeData(roomId);
     }, [roomId]);
 
@@ -126,7 +129,6 @@ const MazeApplet: React.FC<Props> = ({ roomId, onFinish }) => {
                 case 'r':
                     setPlayerPosition(start);
                     setPlayerTrail([start]);
-
                     setDrawPathFlag(false);
                     break;
                 case 'd':
@@ -208,7 +210,12 @@ const MazeApplet: React.FC<Props> = ({ roomId, onFinish }) => {
             setPlayerTrail(prevTrail => [...prevTrail, { x: newX, y: newY }]);
             if (newX === goal.x && newY === goal.y) {
                 setDrawPathFlag(true);
-                onFinish(); // ゴールに到達したときの処理
+                const endTime = Date.now(); // ここで現在時刻を取得
+                // if (endTime) {
+                const clearTime = Math.floor((endTime - (startTime ?? 0)) / 1000); // 秒単位に変換
+                onFinish(clearTime); // ゴールに到達したときにクリアタイムを親コンポーネントに通知
+
+                // }
             }
         }
     };

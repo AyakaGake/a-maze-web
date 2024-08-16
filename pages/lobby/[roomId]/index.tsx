@@ -10,6 +10,7 @@ const inter = Inter({ subsets: ["latin"] });
 export default function Lobby() {
     const router = useRouter();
     const { roomId } = router.query;
+    const { playerId } = router.query;
 
     const handleSubmit = () => {
         console.log("Start");
@@ -33,7 +34,7 @@ export default function Lobby() {
         if (typeof roomId === 'string') {
             generateAndSaveMaze(mode, roomId); // Pass mode and roomId to the function
         }
-    }, []);
+    }, [roomId]);
 
     return (
         <main
@@ -46,7 +47,7 @@ export default function Lobby() {
             </div>
             <button
                 onClick={handleSubmit}
-                className="px-6 py-2 bg-red-600 rounded text-white hover:bg-red-700 w-full"
+                className="absolute bottom-10 center-4 px-4 py-2 bg-red-600 rounded text-white hover:bg-red-700 z-100000"
             >
                 Start Game
             </button>
