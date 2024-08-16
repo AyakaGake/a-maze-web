@@ -57,6 +57,7 @@ export default function Gameplay() {
             console.error('Error saving clear time:', error);
         } else {
             console.log('Clear time saved successfully:', data);
+            router.push(`/ranking/${roomId}`);
         }
     };
 
@@ -76,7 +77,7 @@ export default function Gameplay() {
             <Timer isGameOver={isGameOver} className="absolute top-4 right-4 z-30" />
 
             {/* 右下にランキング */}
-            <Ranking className="absolute bottom-4 right-4 z-30" />
+            <Ranking className="absolute bottom-4 right-4 z-30" roomId={roomId as string} />
 
             {/* ホームスクリーンに戻るボタン */}
             <button
