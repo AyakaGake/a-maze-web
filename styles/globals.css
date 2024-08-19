@@ -24,6 +24,7 @@
 /* background-size: cover;
 background-position: center;
 } */
+/* 
 
 .background-overlay {
   position: absolute;
@@ -33,9 +34,9 @@ background-position: center;
   height: 100%;
   background: rgba(0, 0, 0, 0.5);
   /* 背景にオーバーレイ */
-  z-index: 10;
-}
-
+/* z-index: 10; */
+/* } */
+*/
 /* styles/globals.css などに追加 */
 
 .bg-shape-square {
@@ -88,12 +89,9 @@ background-position: center;
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
+  background: linear-gradient(to bottom,
       transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+      rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb));
 }
 
 @layer utilities {

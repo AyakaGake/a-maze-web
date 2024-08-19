@@ -49,17 +49,17 @@ export default function Ranking({ className, roomId }: RankingProps) {
 
     return (
         <div className={`flex flex-col items-center p-10 bg-white border border-gray-300 rounded-lg shadow-lg w-80 ${className}`}>
-            <h2 className="text-xl font-medium text-gray-900 mb-4">Ranking</h2>
-            <ul className="list-none p-0 text-gray-900">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">Ranking</h2>
+            <ul className="list-none p-0 text-gray-900 w-full">
                 {players.length > 0 ? (
                     players.map((player, index) => (
-                        <li key={index} className="flex justify-between items-center mb-2">
-                            <span className="font-bold">{index + 1}. {player.player_name}</span>
-                            <span className="ml-4">Time: {formatTime(player.clear_time)}</span>
+                        <li key={index} className="flex justify-between items-center mb-3 p-2 border-b border-gray-200">
+                            <span className="font-extrabold text-lg text-red-600">{index + 1}. {player.player_name}</span>
+                            <span className="ml-4 text-lg font-semibold text-gray-800">Time: {formatTime(player.clear_time)}</span>
                         </li>
                     ))
                 ) : (
-                    <li>No players yet</li>
+                    <li className="text-gray-500">No players yet</li>
                 )}
             </ul>
         </div>
