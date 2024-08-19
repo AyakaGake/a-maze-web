@@ -8,7 +8,6 @@
   --background-end-rgb: 255, 255, 255;
 }
 
-
 @media (prefers-color-scheme: dark) {
   :root {
     --foreground-rgb: 255, 255, 255;
@@ -26,7 +25,7 @@
 background-position: center;
 } */
 
-*/ .background-overlay {
+.background-overlay {
   position: absolute;
   top: 0;
   left: 0;
@@ -67,7 +66,6 @@ background-position: center;
   z-index: 5;
 } */
 
-
 .bg-custom-image {
   background-image: url('/images/rock.jpg') !important;
   background-size: cover;
@@ -90,9 +88,12 @@ background-position: center;
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(to bottom,
+  background: linear-gradient(
+      to bottom,
       transparent,
-      rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb));
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
 }
 
 @layer utilities {
