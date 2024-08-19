@@ -35,7 +35,6 @@ export default function Ranking({ className, roomId }: RankingProps) {
                 setLoading(false);
             }
         };
-
         fetchRanking();
     }, [roomId]);
 
@@ -45,16 +44,34 @@ export default function Ranking({ className, roomId }: RankingProps) {
         return `${minutes}m ${seconds}s`;
     };
 
+    const getRankedPlayers = (players: Player[]): { player: Player, rank: number }[] => {
+        const sortedPlayers = [...players];
+        sortedPlayers.sort((a, b) => a.clear_time - b.clear_time);
+
+        const rankedPlayers = [];
+        let currentRank = 1;
+        let lastTime = -1;
+        for (const player of sortedPlayers) {
+            if (player.clear_time !== lastTime) {
+                currentRank = rankedPlayers.length + 1;
+            }
+            rankedPlayers.push({ player, rank: currentRank });
+            lastTime = player.clear_time;
+        }
+        return rankedPlayers;
+    };
+
     if (loading) return <div>Loading...</div>;
+    const rankedPlayers = getRankedPlayers(players);
 
     return (
         <div className={`flex flex-col items-center p-10 bg-white border border-gray-300 rounded-lg shadow-lg w-80 ${className}`}>
             <h2 className="text-2xl font-bold text-gray-900 mb-6">Ranking</h2>
             <ul className="list-none p-0 text-gray-900 w-full">
-                {players.length > 0 ? (
-                    players.map((player, index) => (
-                        <li key={index} className="flex justify-between items-center mb-3 p-2 border-b border-gray-200">
-                            <span className="font-extrabold text-lg text-red-600">{index + 1}. {player.player_name}</span>
+                {rankedPlayers.length > 0 ? (
+                    rankedPlayers.map(({ player, rank }) => (
+                        <li key={player.id} className="flex justify-between items-center mb-3 p-2 border-b border-gray-200">
+                            <span className="font-extrabold text-lg text-red-600">{rank}. {player.player_name}</span>
                             <span className="ml-4 text-lg font-semibold text-gray-800">Time: {formatTime(player.clear_time)}</span>
                         </li>
                     ))
