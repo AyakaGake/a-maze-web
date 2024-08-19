@@ -1,33 +1,30 @@
-import { MazeGenerator } from '@/lib/mazegenerator';
-import Vector from '@/components/Vector';
 import { createClient } from '@supabase/supabase-js';
+import { serializeVector } from '@/components/mazeUtils';
+import Vector from './Vector';
+import { MazeGenerator } from '../lib/mazegenerator';
+import { v4 as uuidv4 } from 'uuid';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+const supabase = createClient(supabaseUrl, supabaseKey);
 
-export const supabase = createClient(supabaseUrl, supabaseKey);
-
-// MazeGenerator インスタンスの作成とデータの取得
-const generateAndSaveMaze = async (roomId: string) => {
-  const mazeGenerator = new MazeGenerator();
+export const generateAndSaveMaze = async (mode: string, roomId: string) => {
+  console.log('Selected Mode(genrateAndSave):', mode);
+  const mazeGenerator = new MazeGenerator(mode); // モードを指定
   mazeGenerator.generate();
+
   const mazeData = mazeGenerator.getMazeMockData();
 
-  // Vector クラスのインスタンスを JSON オブジェクトに変換するユーティリティ関数
-  const serializeVector = (vector: Vector) => ({
-    x: vector.x,
-    y: vector.y,
-  });
-
+  // 迷路データを JSON 形式に変換
   const serializedMazeData = {
-    ...mazeData,
     start: serializeVector(mazeData.start),
     goal: serializeVector(mazeData.goal),
+    cells: mazeData.cells,
   };
 
   const mazeDataJson = JSON.stringify(serializedMazeData);
 
-  // Supabase へのインサート
+  // Supabase に保存
   const { data, error } = await supabase
     .from('maze-game-table')
     .insert([{ room_id: roomId, maze_data: mazeDataJson }])
