@@ -1,5 +1,5 @@
 
-import { MazeGenerator } from "@/pages/compornent/mazegenerator";
+import { MazeGenerator } from "@/pages/lib/mazegenerator";
 import Vector from "@/pages/compornent/Vector";
 import { createClient } from "@supabase/supabase-js";
 

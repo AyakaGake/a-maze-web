@@ -24,7 +24,6 @@ const RankingPage = () => {
                 Home
             </button>
         </div>
-
     );
 };
 

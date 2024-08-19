@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { serializeVector } from '@/pages/compornent/mazeUtils';
 import Vector from './Vector';
-import { MazeGenerator } from './mazegenerator';
+import { MazeGenerator } from '../lib/mazegenerator';
 import { v4 as uuidv4 } from 'uuid';
 
 

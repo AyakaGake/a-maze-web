@@ -1,6 +1,7 @@
 import { supabase } from '@/utils/supabase';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
+import { v4 as uuidv4 } from 'uuid'; // 正しくインポートする
 
 export default function Join() {
     const [playerName, setPlayerName] = useState<string>(''); // State for player name
@@ -9,12 +10,19 @@ export default function Join() {
 
     const handleSubmit = async () => {
         console.log("Join");
+
+        const playerId = uuidv4(); // uuidv4 を正しく使用
+        console.log("playerId: ", playerId);
+
         sessionStorage.setItem('playerName', playerName);
+        sessionStorage.setItem('roomId', roomId);
+        sessionStorage.setItem('playerId', playerId);
 
         const { data, error } = await supabase
             .from('game-player-table')
             .insert([
                 {
+                    player_id: playerId,
                     room_id: roomId,
                     player_name: playerName,
                     created_at: new Date().toISOString()

@@ -49,8 +49,7 @@ export default function Gameplay() {
             })
             .match({
                 room_id: roomId,
-                // player_id: playerId,
-                // player_name: playerName
+                player_id: playerId,
             });
 
         if (error) {
@@ -77,7 +76,7 @@ export default function Gameplay() {
             <Timer isGameOver={isGameOver} className="absolute top-4 right-4 z-30" />
 
             {/* 右下にランキング */}
-            <Ranking className="absolute bottom-4 right-4 z-30" roomId={roomId as string} />
+            {/* <Ranking className="absolute bottom-4 right-4 z-30" roomId={roomId as string} /> */}
 
             {/* ホームスクリーンに戻るボタン */}
             <button

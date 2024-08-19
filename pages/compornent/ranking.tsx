@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
+import { supabase } from '@/utils/supabase';
 
 type Player = {
+    id: number;
     player_name: string;
-    clear_time: number;
+    clear_time: number; // time in seconds
 };
 
 interface RankingProps {
@@ -17,15 +19,16 @@ export default function Ranking({ className, roomId }: RankingProps) {
     useEffect(() => {
         const fetchRanking = async () => {
             try {
-                const response = await fetch(`/api/getRanking?roomId=${roomId}`);
-                const result = await response.json();
-
-                if (response.ok) {
-                    console.log('Fetched players:', result.players); // デバッグ用
-                    setPlayers(result.players || []);
-                } else {
-                    console.error('Error fetching ranking data:', result.error);
+                const { data, error } = await supabase
+                    .from('game-player-table') // テーブル名を確認してください
+                    .select('*')
+                    .eq('room_id', roomId)
+                    .order('clear_time', { ascending: true });
+                if (error) {
+                    throw error;
                 }
+
+                setPlayers(data || []);
             } catch (error) {
                 console.error('Error fetching ranking data:', error);
             } finally {
@@ -35,6 +38,12 @@ export default function Ranking({ className, roomId }: RankingProps) {
 
         fetchRanking();
     }, [roomId]);
+
+    const formatTime = (timeInSeconds: number): string => {
+        const minutes = Math.floor(timeInSeconds / 60);
+        const seconds = timeInSeconds % 60;
+        return `${minutes}m ${seconds}s`;
+    };
 
     if (loading) return <div>Loading...</div>;
 
@@ -46,7 +55,7 @@ export default function Ranking({ className, roomId }: RankingProps) {
                     players.map((player, index) => (
                         <li key={index} className="flex justify-between items-center mb-2">
                             <span className="font-bold">{index + 1}. {player.player_name}</span>
-                            <span className="ml-4">Time: {player.clear_time} seconds</span>
+                            <span className="ml-4">Time: {formatTime(player.clear_time)}</span>
                         </li>
                     ))
                 ) : (

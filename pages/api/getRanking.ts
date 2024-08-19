@@ -1,20 +1,19 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { supabase } from '@/utils/supabase'; // Supabase クライアントのインポート
+import { supabase } from '@/utils/supabase'; // Supabase client import
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const { roomId } = req.query;
 
-    // roomId の型チェックと変換
     if (typeof roomId !== 'string') {
         return res.status(400).json({ error: 'Room ID is required' });
     }
 
     try {
         const { data, error } = await supabase
-            .from('game_player_table') // テーブル名を確認してください
+            .from('game_player_table') // Ensure this is your table name
             .select('*')
             .eq('room_id', roomId)
-            .order('clear_time', { ascending: true }); // clear_time で昇順ソート
+            .order('clear_time', { ascending: true });
 
         if (error) {
             throw error;
