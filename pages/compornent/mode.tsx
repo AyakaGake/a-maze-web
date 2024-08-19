@@ -1,24 +1,54 @@
+import { supabase } from '@/utils/supabase';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-import { v4 } from 'uuid'
-
-// const logFunction = () => {
-//     console.log("Start");
-//     // TODO: navigate to gameplay page
-// };
+import { v4 as uuidv4 } from 'uuid';
 
 export default function Mode() {
     const router = useRouter();
     const [selectedMode, setSelectedMode] = useState<string>('easy'); // Default to 'easy'
+    const [playerName, setPlayerName] = useState<string>(''); // State for player name
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
+        const roomId = uuidv4();
         console.log("Start");
-        const id = v4();
-        // console.log(id)
+        const playerId = uuidv4();
+        console.log("playerId: ", playerId);
+
+        sessionStorage.setItem('playerName', playerName);
+        sessionStorage.setItem('selectedMode', selectedMode);
+        sessionStorage.setItem('roomId', roomId); // Save roomId to sessionStorage
+        sessionStorage.setItem('playerId', playerId);
+
+        const { data, error } = await supabase
+            .from('game-player-table')
+            .insert([
+                {
+                    player_id: playerId,
+                    room_id: roomId,
+                    player_name: playerName,
+                    created_at: new Date().toISOString()
+                }
+            ])
+            .select();
+
+        if (error) {
+            console.error('Error inserting data to game_player_table:', error);
+            return;
+        }
+
         router.push({
-            pathname: `/gameplay/${id}`,
-            query: { mode: selectedMode }
+            pathname: `/lobby/${roomId}`,
+            // query: { mode: selectedMode }
         });
+
+        // const { data, error } = await supabase
+        //     .from('maze-game-table')
+        //     .insert([
+        //         { room_id: id, maze_data: 'otherValue' }
+        //         // { room_id: id, maze_data: 'otherValue' },
+        //     ])
+        //     .select()
+
     };
 
     return (
@@ -30,19 +60,39 @@ export default function Mode() {
                 type='text'
                 placeholder='Enter your display name'
                 className='border border-gray-300 rounded bg-white p-2 w-full mb-4 text-black-900 focus:border-red-700'
+                value={playerName}
+                onChange={(ev) => setPlayerName(ev.target.value)} // Update playerName state
             />
             <p className="mb-4 text-red-900">Please choose the mode</p>
             <div className="flex gap-4 mb-4">
                 <label className="flex items-center text-red-900">
-                    <input type="radio" name="mode" value="easy" defaultChecked onChange={(ev) => { setSelectedMode(ev.target.value) }} className="mr-2" />
+                    <input
+                        type="radio"
+                        name="mode"
+                        value="easy"
+                        checked={selectedMode === 'easy'} // Controlled radio button
+                        defaultChecked onChange={(ev) => setSelectedMode(ev.target.value)}
+                        className="mr-2" />
                     Easy
                 </label>
                 <label className="flex items-center text-red-900">
-                    <input type="radio" name="mode" value="hard" onChange={(ev) => { setSelectedMode(ev.target.value) }} className="mr-2" />
+                    <input
+                        type="radio"
+                        name="mode"
+                        value="hard"
+                        checked={selectedMode === 'hard'} // Controlled radio button
+                        onChange={(ev) => setSelectedMode(ev.target.value)}
+                        className="mr-2" />
                     Hard
                 </label>
                 <label className="flex items-center text-red-900">
-                    <input type="radio" name="mode" value="super-hard" onChange={(ev) => { setSelectedMode(ev.target.value) }} className="mr-2" />
+                    <input
+                        type="radio"
+                        name="mode"
+                        value="super-hard"
+                        checked={selectedMode === 'super-hard'} // Controlled radio button
+                        onChange={(ev) => setSelectedMode(ev.target.value)}
+                        className="mr-2" />
                     Super Hard
                 </label>
             </div>

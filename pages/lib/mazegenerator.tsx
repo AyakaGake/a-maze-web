@@ -2,9 +2,6 @@
 import Vector from '@/pages/compornent/Vector';
 import State from '@/pages/compornent/State';
 import Maze from '@/pages/compornent/maze';
-// import Mode from './mode';
-// import { assert } from '@/pages/compornent/assert'; // assert 関数をインポート
-
 
 export class MazeGenerator {
     private maze: Maze;
@@ -25,6 +22,26 @@ export class MazeGenerator {
 
     public getMaze(): Maze {
         return this.maze;
+    }
+
+    public getSize(): number {
+        return this.maze.getSize();
+    }
+
+    public getCellSize(): number {
+        return this.maze.getCellSize();
+    }
+
+    public getStart(): Vector {
+        return this.maze.getStart();
+    }
+
+    public getGoal(): Vector {
+        return this.maze.getGoal();
+    }
+
+    public getRemovedWalls(): Vector[] {
+        return this.maze.getRemovedWalls();
     }
 
     private record(moveDirection: Vector): void {
@@ -50,6 +67,10 @@ export class MazeGenerator {
 
     private dfSearch(state: State): boolean {
         var position = state.position;
+
+        if (position.x < 0 || position.x >= this.maze.getSize() || position.y < 0 || position.y >= this.maze.getSize()) {
+            return false;
+        }
 
         // この位置が既に訪問済みなら終了
         if (this.stateVisitedFlags[position.x][position.y]) {
@@ -93,5 +114,15 @@ export class MazeGenerator {
 
     public generate(): void {
         this.dfSearch(new State(this.maze.getGoal()));
+    }
+
+    public getMazeMockData(): any {
+        return {
+            size: this.maze.getSize(),
+            cellSize: this.maze.getCellSize(),
+            start: this.maze.getStart(), // スタート位置を取得
+            goal: this.maze.getGoal(), // ゴール位置を取得
+            cells: this.maze // 迷路の状態（壁が削除された位置など）
+        };
     }
 }

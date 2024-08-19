@@ -1,10 +1,41 @@
-import router, { useRouter } from 'next/router';
+import { supabase } from '@/utils/supabase';
+import { useRouter } from 'next/router';
+import { useState } from 'react';
+import { v4 as uuidv4 } from 'uuid'; // 正しくインポートする
 
 export default function Join() {
-    const handleSubmit = () => {
+    const [playerName, setPlayerName] = useState<string>(''); // State for player name
+    const [roomId, setRoomId] = useState<string>(''); // State for roomId
+    const router = useRouter(); // Correctly get the router instance
+
+    const handleSubmit = async () => {
         console.log("Join");
-        // TODO: navigate to gameplay page;
-        router.push('/gameplay');
+
+        const playerId = uuidv4(); // uuidv4 を正しく使用
+        console.log("playerId: ", playerId);
+
+        sessionStorage.setItem('playerName', playerName);
+        sessionStorage.setItem('roomId', roomId);
+        sessionStorage.setItem('playerId', playerId);
+
+        const { data, error } = await supabase
+            .from('game-player-table')
+            .insert([
+                {
+                    player_id: playerId,
+                    room_id: roomId,
+                    player_name: playerName,
+                    created_at: new Date().toISOString()
+                }
+            ])
+            .select();
+
+        if (error) {
+            console.error('Error inserting data to game_player_table:', error);
+            return;
+        }
+
+        router.push({ pathname: `/lobby/${roomId}`, });
     };
 
     return (
@@ -16,11 +47,15 @@ export default function Join() {
                 type='text'
                 placeholder='Enter room ID'
                 className='border border-gray-300 rounded bg-white p-2 w-full mb-4 text-black-800 focus:border-gray-500'
+                value={roomId}
+                onChange={(ev) => setRoomId(ev.target.value)} // Update roomId state
             />
             <input
                 type='text'
                 placeholder='Enter your display name'
-                className='border border-gray-300 rounded bg-white p-2 w-full mb-4 text-black-800 focus:border-gray-500'
+                className='border border-gray-300 rounded bg-white p-2 w-full mb-4 text-black-900 focus:border-red-700'
+                value={playerName}
+                onChange={(ev) => setPlayerName(ev.target.value)} // Update playerName state
             />
             <button
                 onClick={handleSubmit}
