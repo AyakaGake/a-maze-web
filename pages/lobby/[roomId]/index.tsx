@@ -13,7 +13,6 @@ export default function Lobby() {
 
   const handleSubmit = () => {
     console.log('Start');
-
     // Store player name and roomId in sessionStorage
     // sessionStorage.setItem('playerName', playerName);
     // sessionStorage.setItem('roomId', roomId); // Store roomId
@@ -25,10 +24,8 @@ export default function Lobby() {
   useEffect(() => {
     // Call the function to generate and save the maze when the component mounts
     // const roomId = 'actual-room-id'; // Replace with actual room ID or fetch dynamically
-
     const mode = sessionStorage.getItem('selectedMode') || 'easy'; // Default to 'easy' if not found
-    //ここでは、正しくmodeを入手することができている。
-    console.log('Selected Mode:', mode); // Debug log
+    console.log('Selected Mode:', mode); // Debug log ここでは、正しくmodeを入手することができている。
 
     if (typeof roomId === 'string') {
       generateAndSaveMaze(mode, roomId); // Pass mode and roomId to the function

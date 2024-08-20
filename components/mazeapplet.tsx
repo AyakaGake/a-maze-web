@@ -40,6 +40,17 @@ const MazeApplet: React.FC<Props> = ({ roomId, onFinish }) => {
     cellSize: number;
   } | null>(null);
 
+  // const [playerId, setPlayerId] = useState<string | null>(null);
+
+  // useEffect(() => {
+  //   const id = localStorage.getItem('playerId');
+  //   if (id) {
+  //     setPlayerId(id);
+  //   } else {
+  //     console.error('Player ID not found in localStorage');
+  //   }
+  // }, []);
+
   useEffect(() => {
     setStartTime(Date.now()); // ゲーム開始時の時間を記録
     // Wall removal logic
@@ -223,6 +234,25 @@ const MazeApplet: React.FC<Props> = ({ roomId, onFinish }) => {
     }
   };
 
+
+  // const sendMyPosition = async (newPosition: { x: number; y: number }) => {
+  //   if (!playerId) {
+  //     console.error('Invalid playerId:', playerId);
+  //     return;
+  //   }
+  //   try {
+
+
+  //     if (error) {
+  //       throw error;
+  //     }
+  //   } catch (error) {
+  //     console.error('Error updating player position:', error);
+  //   }
+  // };
+
+
+
   const movePlayer = (dx: number, dy: number) => {
     console.log('move');
     const newX = playerPosition.x + dx;
@@ -237,9 +267,13 @@ const MazeApplet: React.FC<Props> = ({ roomId, onFinish }) => {
     ) {
       setPlayerPosition(new Vector(newX, newY));
       setPlayerTrail((prevTrail) => [...prevTrail, { x: newX, y: newY }]);
+      // sendMyPosition({ x: newX, y: newY });
       if (newX === goal.x && newY === goal.y) {
         setDrawPathFlag(true);
         const endTime = Date.now(); // ここで現在時刻を取得
+
+
+
         // if (endTime) {
         const clearTime = Math.floor((endTime - (startTime ?? 0)) / 1000); // 秒単位に変換
         onFinish(clearTime); // ゴールに到達したときにクリアタイムを親コンポーネントに通知

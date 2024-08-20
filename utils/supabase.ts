@@ -1,11 +1,12 @@
 import { MazeGenerator } from '@/lib/mazegenerator';
 import Vector from '@/components/Vector';
-import { createClient } from '@supabase/supabase-js';
+import supabase from '../lib/supabaseClient';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+// import { createClient } from '@supabase/supabase-js';
 
-export const supabase = createClient(supabaseUrl, supabaseKey);
+// const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+// const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+// export const supabase = createClient(supabaseUrl, supabaseKey);
 
 // MazeGenerator インスタンスの作成とデータの取得
 const generateAndSaveMaze = async (roomId: string) => {
