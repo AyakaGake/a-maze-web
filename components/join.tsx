@@ -25,7 +25,8 @@ export default function Join() {
                     player_id: playerId,
                     room_id: roomId,
                     player_name: playerName,
-                    created_at: new Date().toISOString()
+                    created_at: new Date().toISOString(),
+                    is_host: false
                 }
             ])
             .select();

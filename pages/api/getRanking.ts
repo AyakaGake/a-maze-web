@@ -1,3 +1,4 @@
+//Never called
 import { NextApiRequest, NextApiResponse } from 'next';
 import supabase from '../../lib/supabaseClient'; // Note the relative path
 
