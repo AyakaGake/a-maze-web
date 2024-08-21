@@ -66,9 +66,19 @@ export default function Lobby() {
     console.log('Updated players:', players);
   }, [players]);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     console.log('Start');
     router.push(`/gameplay/${roomId}`);
+
+    const { data: gameData, error: gameError } = await supabase
+      .from('maze-game-table')
+      .update({ game_status: 'In_progress' })
+      .eq('room_id', roomId);
+
+    if (gameError) {
+      console.error('Error updating data in maze_game_table:', gameError);
+      return;
+    }
   };
 
   useEffect(() => {

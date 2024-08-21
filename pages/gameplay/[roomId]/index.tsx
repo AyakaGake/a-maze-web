@@ -65,6 +65,18 @@ export default function Gameplay() {
     router.push('/');
   };
 
+  const handleEnd = async () => {
+    const { data: gameData, error: gameError } = await supabase
+      .from('maze-game-table')
+      .update({ game_status: 'Over' })
+      .eq('room_id', roomId);
+
+    if (gameError) {
+      console.error('Error updating data in maze_game_table:', gameError);
+      return;
+    }
+  };
+
   return (
     <div
       className={`relative flex h-screen flex-col items-center justify-center p-24 z-10000000  bg-custom-image`}
@@ -86,6 +98,14 @@ export default function Gameplay() {
         className='absolute bottom-4 center-4 px-4 py-2 bg-red-600 rounded text-white hover:bg-red-700 z-100000'
       >
         Home
+      </button>
+      {/* ランキングに戻るボタン */}
+      <button
+        type='button'
+        onClick={handleEnd}
+        className='absolute bottom-4 right-4 px-4 py-2 bg-red-600 rounded text-white hover:bg-red-700 z-100000'
+      >
+        End
       </button>
       {/* プレイヤー名を左下に表示 */}
       <div

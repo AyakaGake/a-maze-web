@@ -26,7 +26,7 @@ export const generateAndSaveMaze = async (mode: string, roomId: string) => {
   // Supabase に保存
   const { data, error } = await supabase
     .from('maze-game-table')
-    .insert([{ room_id: roomId, maze_data: mazeDataJson }])
+    .insert([{ room_id: roomId, maze_data: mazeDataJson, game_status: "Waiting" }])
     .select();
 
   if (error) {
