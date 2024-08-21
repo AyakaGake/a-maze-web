@@ -11,13 +11,20 @@ export default function Lobby() {
   const { roomId } = router.query;
   // const { playerId } = router.query;
   const [players, setPlayers] = useState<any[]>([]);
+  const [playerId, setPlayerId] = useState<string | null>(null);
+  const [isHost, setIsHost] = useState<boolean | null>(null);
   // const playerName = sessionStorage.getItem('playerName') || 'You';
-  const playerId = sessionStorage.getItem('playerId');
-  const is_host = sessionStorage.getItem('is_host') === 'true';
+  // const playerId = sessionStorage.getItem('playerId');
+  // const is_host = sessionStorage.getItem('is_host') === 'true';
 
-  console.log("is_host", is_host)
-  console.log("players", players)
+  useEffect(() => {
+    // Access sessionStorage only in the browser
+    const storedPlayerId = sessionStorage.getItem('playerId');
+    const storedIsHost = sessionStorage.getItem('is_host') === 'true';
 
+    setPlayerId(storedPlayerId);
+    setIsHost(storedIsHost);
+  }, []);
 
   useEffect(() => {
     const getPlayers = async () => {
@@ -146,7 +153,7 @@ export default function Lobby() {
         </ul>
         <p className='text-center mt-4 text-lg font-semibold'>{players.length} players</p>
       </div>
-      {is_host && (
+      {isHost && (
         <button
           onClick={handleSubmit}
           className='fixed bottom-4 left-1/2 transform -translate-x-1/2 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition duration-200'
