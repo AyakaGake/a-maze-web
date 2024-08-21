@@ -41,7 +41,7 @@ export default function Ranking({ className, roomId }: RankingProps) {
     }, [roomId]);
 
     const formatTime = (timeInSeconds: number): string => {
-        if (timeInSeconds >= UNCLEARED_TIME) return 'Uncleared';
+        if (timeInSeconds >= UNCLEARED_TIME) return 'Not finished';
 
         const minutes = Math.floor(timeInSeconds / 60);
         const seconds = timeInSeconds % 60;
@@ -77,7 +77,7 @@ export default function Ranking({ className, roomId }: RankingProps) {
                         <li key={player.id} className="flex justify-between items-center mb-3 p-2 border-b border-gray-200">
                             <span className="font-extrabold text-lg text-red-600">{rank}. {player.player_name}</span>
                             <span className="ml-4 text-lg font-semibold text-gray-800">
-                                {player.clear_time >= UNCLEARED_TIME ? 'Uncleared' : formatTime(player.clear_time)}
+                                {player.clear_time >= UNCLEARED_TIME ? 'Not finished' : formatTime(player.clear_time)}
                             </span>
                         </li>
                     ))

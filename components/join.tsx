@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from 'uuid'; // 正しくインポートする
 export default function Join() {
     const [playerName, setPlayerName] = useState<string>(''); // State for player name
     const [roomId, setRoomId] = useState<string>(''); // State for roomId
+    const [error, setError] = useState<string | null>(null);
     const router = useRouter(); // Correctly get the router instance
 
     const handleSubmit = async () => {
@@ -19,25 +20,55 @@ export default function Join() {
         sessionStorage.setItem('playerId', playerId);
         sessionStorage.setItem('is_host', 'false');
 
-        const { data, error } = await supabase
-            .from('game-player-table')
-            .insert([
-                {
-                    player_id: playerId,
-                    room_id: roomId,
-                    player_name: playerName,
-                    created_at: new Date().toISOString(),
-                    is_host: false
-                }
-            ])
-            .select();
+        const { data: gameStatusData, error: statusError } = await supabase
+            .from('maze-game-table')
+            .select('game_status')
+            .eq('room_id', roomId)
+            .single();
 
-        if (error) {
-            console.error('Error inserting data to game_player_table:', error);
+        if (statusError) {
+            console.error('Error fetching game status:', statusError);
+            setError('Failed to fetch game status.');
             return;
         }
 
-        router.push({ pathname: `/lobby/${roomId}`, });
+        if (!gameStatusData) {
+            setError('Room not found.');
+            return;
+        }
+
+        const gameStatus = gameStatusData.game_status;
+
+        if (gameStatus === 'Waiting') {
+            // Insert player data
+            const { data, error: insertError } = await supabase
+                .from('game-player-table')
+                .insert([
+                    {
+                        player_id: playerId,
+                        room_id: roomId,
+                        player_name: playerName,
+                        created_at: new Date().toISOString(),
+                        is_host: false
+                    }
+                ])
+                .select();
+
+            if (insertError) {
+                console.error('Error inserting data to game_player_table:', insertError);
+                setError('Failed to join the game.');
+                return;
+            }
+
+            // Redirect to lobby
+            router.push(`/lobby/${roomId}`);
+        } else if (gameStatus === 'In_progress') {
+            setError("You can't join this room because it is in progress now.");
+        } else if (gameStatus === 'Over') {
+            router.push(`/ranking/${roomId}`);
+        } else {
+            setError('Unknown game status.');
+        }
     };
 
     return (
@@ -59,6 +90,9 @@ export default function Join() {
                 value={playerName}
                 onChange={(ev) => setPlayerName(ev.target.value)} // Update playerName state
             />
+            {error && (
+                <p className='text-red-600 mb-4'>{error}</p> // Display error message
+            )}
             <button
                 onClick={handleSubmit}
                 className="px-6 py-2 bg-red-600 rounded text-white hover:bg-red-700 w-full"

@@ -20,15 +20,6 @@ export default function Gameplay() {
   const { roomId } = router.query;
   // const playerId = sessionStorage.getItem('playerId');
 
-  // const searchParams = useSearchParams()
-
-  // useEffect(() => {
-  //     if (typeof window !== 'undefined') {
-  //         const storedName = sessionStorage.getItem('playerName');
-  //         setPlayerName(storedName || 'unknown'); // Default to 'unknown' if no value is found
-  //     }
-  // }, []);
-
   useEffect(() => {
     const storedName = sessionStorage.getItem('playerName');
     const storedId = sessionStorage.getItem('playerId');

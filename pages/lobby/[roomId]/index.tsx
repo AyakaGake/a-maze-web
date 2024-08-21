@@ -13,7 +13,9 @@ export default function Lobby() {
   const [players, setPlayers] = useState<any[]>([]);
   // const playerName = sessionStorage.getItem('playerName') || 'You';
   const playerId = sessionStorage.getItem('playerId');
+  const is_host = sessionStorage.getItem('is_host') === 'true';
 
+  console.log("is_host", is_host)
   console.log("players", players)
 
 
@@ -144,12 +146,14 @@ export default function Lobby() {
         </ul>
         <p className='text-center mt-4 text-lg font-semibold'>{players.length} players</p>
       </div>
-      <button
-        onClick={handleSubmit}
-        className='fixed bottom-4 left-1/2 transform -translate-x-1/2 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition duration-200'
-      >
-        Start Game
-      </button>
+      {is_host && (
+        <button
+          onClick={handleSubmit}
+          className='fixed bottom-4 left-1/2 transform -translate-x-1/2 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition duration-200'
+        >
+          Start Game
+        </button>
+      )}
     </main>
   );
 }
