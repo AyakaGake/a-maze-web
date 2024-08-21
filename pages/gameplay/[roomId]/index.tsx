@@ -12,6 +12,7 @@ const inter = Inter({ subsets: ['latin'] });
 
 export default function Gameplay() {
   const [isGameOver, setIsGameOver] = useState<boolean>(false);
+  const [isGiveUp, setIsGiveUp] = useState<boolean>(false);
   const [playerName, setPlayerName] = useState<string | null>(null);
   const [playerId, setPlayerId] = useState<string | null>(null);
 
@@ -89,6 +90,30 @@ export default function Gameplay() {
     }
   };
 
+
+  const handleGiveUp = async () => {
+    setIsGameOver(true);
+    setIsGiveUp(true);
+    console.log('Game given up.');
+
+    const giveUpTime = 99 * 60 + 59; // 99 minutes and 59 seconds in seconds
+
+    const { data, error } = await supabase
+      .from('game-player-table')
+      .update({ clear_time: giveUpTime })
+      .match({ room_id: roomId, player_id: playerId });
+
+    if (error) {
+      console.error('Error updating clear time to give up:', error);
+    } else {
+      console.log('Clear time set to give up successfully:', data);
+      const allCleared = await checkAllPlayersCleared();
+      if (allCleared) {
+        handleEnd();
+      }
+    }
+  };
+
   const checkAllPlayersCleared = async () => {
     if (roomId) {
       const { data, error } = await supabase
@@ -134,13 +159,10 @@ export default function Gameplay() {
 
       <MazeApplet roomId={roomId as string} onFinish={handleFinish} />
 
-      {/* 右上にタイマー */}
-      <Timer isGameOver={isGameOver} className='absolute top-4 right-4 z-30' />
+      {/* Timer */}
+      <Timer isGameOver={isGameOver} isGiveUp={isGiveUp} className='absolute top-4 right-4 z-30' />
 
-      {/* 右下にランキング */}
-      {/* <Ranking className="absolute bottom-4 right-4 z-30" roomId={roomId as string} /> */}
-
-      {/* ホームスクリーンに戻るボタン */}
+      {/* Home */}
       <button
         type='button'
         onClick={handleHomeClick}
@@ -148,15 +170,15 @@ export default function Gameplay() {
       >
         Home
       </button>
-      {/* ランキングに戻るボタン */}
+      {/* Give Up*/}
       <button
         type='button'
-        onClick={handleEnd}
+        onClick={handleGiveUp}
         className='absolute bottom-4 right-4 px-4 py-2 bg-red-600 rounded text-white hover:bg-red-700 z-100000'
       >
-        End
+        Give Up
       </button>
-      {/* プレイヤー名を左下に表示 */}
+      {/* Player Name */}
       <div
         className='absolute bottom-4 left-4 text-white font-bold mb-1 text-3xl z-30'
         style={{ zIndex: 20 }}
