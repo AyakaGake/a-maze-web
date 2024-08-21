@@ -1,12 +1,11 @@
 import { createClient } from '@supabase/supabase-js';
 import { serializeVector } from '@/components/mazeUtils';
-import Vector from './Vector';
 import { MazeGenerator } from '../lib/mazegenerator';
-import { v4 as uuidv4 } from 'uuid';
+import supabase from '../lib/supabaseClient';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
-const supabase = createClient(supabaseUrl, supabaseKey);
+// const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+// const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+// const supabase = createClient(supabaseUrl, supabaseKey);
 
 export const generateAndSaveMaze = async (mode: string, roomId: string) => {
   console.log('Selected Mode(genrateAndSave):', mode);

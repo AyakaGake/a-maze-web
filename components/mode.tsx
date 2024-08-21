@@ -1,4 +1,4 @@
-import { supabase } from '@/utils/supabase';
+import supabase from '../lib/supabaseClient';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
@@ -26,7 +26,8 @@ export default function Mode() {
                     player_id: playerId,
                     room_id: roomId,
                     player_name: playerName,
-                    created_at: new Date().toISOString()
+                    created_at: new Date().toISOString(),
+                    is_host: true
                 }
             ])
             .select();

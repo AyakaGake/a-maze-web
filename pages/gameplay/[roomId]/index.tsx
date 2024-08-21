@@ -5,7 +5,8 @@ import MazeApplet from '@/components/mazeapplet';
 import { useEffect, useState } from 'react';
 import router, { useRouter } from 'next/router';
 import { useSearchParams } from 'next/navigation';
-import { supabase } from '@/utils/supabase';
+import supabase from '../../../lib/supabaseClient';
+
 
 const inter = Inter({ subsets: ['latin'] });
 

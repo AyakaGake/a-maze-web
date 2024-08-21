@@ -1,5 +1,7 @@
+//Never called
 import { NextApiRequest, NextApiResponse } from 'next';
-import { supabase } from '@/utils/supabase'; // Supabase client import
+import supabase from '../../lib/supabaseClient'; // Note the relative path
+
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const { roomId } = req.query;
