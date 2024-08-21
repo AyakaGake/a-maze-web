@@ -2,11 +2,12 @@ import { useState, useEffect } from 'react';
 
 interface TimerProps {
     isGameOver: boolean;
+    isGiveUp: boolean;
     className?: string; // optional className prop
     // onGameClear?: (time: number) => void; // コールバック関数の追加
 }
 
-export default function Timer({ isGameOver, className }: TimerProps) {
+export default function Timer({ isGameOver, isGiveUp, className }: TimerProps) {
     const [seconds, setSeconds] = useState<number>(0);
     const [isActive, setIsActive] = useState<boolean>(true);
 
@@ -28,22 +29,6 @@ export default function Timer({ isGameOver, className }: TimerProps) {
 
         };
     }, [isActive, isGameOver]);
-    // }, [isActive]);
-
-    // useEffect(() => {
-    //     if (isGameOver) {
-    //         setIsActive(false);
-    //         handleStop()
-
-    //     }
-    // }, [isGameOver]);
-
-    // // const handleStart = () => setIsActive(true);
-    // const handleStop = () => setIsActive(false);
-    // const handleReset = () => {
-    //     setIsActive(false);
-    //     setSeconds(0);
-    // };
 
     const formatTime = (seconds: number): string => {
         const minutes = Math.floor(seconds / 60);
@@ -52,9 +37,15 @@ export default function Timer({ isGameOver, className }: TimerProps) {
     };
     // console.log(`gameover: ${formatTime(seconds)}`);
 
+    const getTextColor = () => {
+        if (isGiveUp) return 'text-red-700'; // Red color for Give Up
+        if (isGameOver) return 'text-green-500'; // Green color for Game Clear
+        return 'text-white'; // Default color
+    };
+
     return (
-        <div className={`text-3xl font-bold mb-1 ${isGameOver ? 'text-green-500' : 'text-white'} ${className}`}>
-            {isGameOver ? `gameclear: ${formatTime(seconds)}` : `passed: ${formatTime(seconds)}`}
+        <div className={`text-3xl font-bold mb-1 ${getTextColor()} ${className}`}>
+            {isGiveUp ? 'Give Up' : isGameOver ? `Game clear: ${formatTime(seconds)}` : `Passed: ${formatTime(seconds)}`}
         </div>
     );
 }

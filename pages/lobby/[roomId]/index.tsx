@@ -13,7 +13,9 @@ export default function Lobby() {
   const [players, setPlayers] = useState<any[]>([]);
   // const playerName = sessionStorage.getItem('playerName') || 'You';
   const playerId = sessionStorage.getItem('playerId');
+  const is_host = sessionStorage.getItem('is_host') === 'true';
 
+  console.log("is_host", is_host)
   console.log("players", players)
 
 
@@ -38,14 +40,13 @@ export default function Lobby() {
     }
 
     // Subscribe to real-time updates
-    const channel = supabase.channel('custom-insert-channel')
+    const playerChannel = supabase.channel('player-channel')
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'game-player-table', filter: `room_id=eq.${roomId}` },
         (payload) => {
-          console.log('Change received!', payload);
+          console.log('Player change received!', payload);
           setPlayers(prevPlayers => {
-            // Avoid duplicates and add new player if not already in list and not the current player
             if (payload.new.player_id !== playerId && !prevPlayers.some(player => player.player_id === payload.new.player_id)) {
               return [...prevPlayers, payload.new];
             }
@@ -55,9 +56,22 @@ export default function Lobby() {
       )
       .subscribe();
 
+    // Create a unique channel for game status updates
+    const gameChannel = supabase.channel('game-channel')
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'maze-game-table', filter: `room_id=eq.${roomId}` },
+        (payload) => {
+          console.log('Game status change received!', payload);
+          router.push(`/gameplay/${roomId}`);
+        }
+      )
+      .subscribe();
+
     // Cleanup
     return () => {
-      supabase.removeChannel(channel);
+      supabase.removeChannel(playerChannel);
+      supabase.removeChannel(gameChannel);
     };
   }, [roomId, playerId]);
 
@@ -66,9 +80,19 @@ export default function Lobby() {
     console.log('Updated players:', players);
   }, [players]);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     console.log('Start');
-    router.push(`/gameplay/${roomId}`);
+    // router.push(`/gameplay/${roomId}`);
+
+    const { data: gameData, error: gameError } = await supabase
+      .from('maze-game-table')
+      .update({ game_status: 'In_progress' })
+      .eq('room_id', roomId);
+
+    if (gameError) {
+      console.error('Error updating data in maze_game_table:', gameError);
+      return;
+    }
   };
 
   useEffect(() => {
@@ -122,12 +146,14 @@ export default function Lobby() {
         </ul>
         <p className='text-center mt-4 text-lg font-semibold'>{players.length} players</p>
       </div>
-      <button
-        onClick={handleSubmit}
-        className='fixed bottom-4 left-1/2 transform -translate-x-1/2 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition duration-200'
-      >
-        Start Game
-      </button>
+      {is_host && (
+        <button
+          onClick={handleSubmit}
+          className='fixed bottom-4 left-1/2 transform -translate-x-1/2 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition duration-200'
+        >
+          Start Game
+        </button>
+      )}
     </main>
   );
 }

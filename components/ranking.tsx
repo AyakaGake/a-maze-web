@@ -12,6 +12,8 @@ interface RankingProps {
     roomId: string;
 }
 
+const UNCLEARED_TIME = 99 * 60 + 59;
+
 export default function Ranking({ className, roomId }: RankingProps) {
     const [players, setPlayers] = useState<Player[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
@@ -39,6 +41,8 @@ export default function Ranking({ className, roomId }: RankingProps) {
     }, [roomId]);
 
     const formatTime = (timeInSeconds: number): string => {
+        if (timeInSeconds >= UNCLEARED_TIME) return 'Not finished';
+
         const minutes = Math.floor(timeInSeconds / 60);
         const seconds = timeInSeconds % 60;
         return `${minutes}m ${seconds}s`;
@@ -72,7 +76,9 @@ export default function Ranking({ className, roomId }: RankingProps) {
                     rankedPlayers.map(({ player, rank }) => (
                         <li key={player.id} className="flex justify-between items-center mb-3 p-2 border-b border-gray-200">
                             <span className="font-extrabold text-lg text-red-600">{rank}. {player.player_name}</span>
-                            <span className="ml-4 text-lg font-semibold text-gray-800">Time: {formatTime(player.clear_time)}</span>
+                            <span className="ml-4 text-lg font-semibold text-gray-800">
+                                {player.clear_time >= UNCLEARED_TIME ? 'Not finished' : formatTime(player.clear_time)}
+                            </span>
                         </li>
                     ))
                 ) : (
