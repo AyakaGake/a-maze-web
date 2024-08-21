@@ -38,14 +38,13 @@ export default function Lobby() {
     }
 
     // Subscribe to real-time updates
-    const channel = supabase.channel('custom-insert-channel')
+    const playerChannel = supabase.channel('player-channel')
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'game-player-table', filter: `room_id=eq.${roomId}` },
         (payload) => {
-          console.log('Change received!', payload);
+          console.log('Player change received!', payload);
           setPlayers(prevPlayers => {
-            // Avoid duplicates and add new player if not already in list and not the current player
             if (payload.new.player_id !== playerId && !prevPlayers.some(player => player.player_id === payload.new.player_id)) {
               return [...prevPlayers, payload.new];
             }
@@ -55,9 +54,22 @@ export default function Lobby() {
       )
       .subscribe();
 
+    // Create a unique channel for game status updates
+    const gameChannel = supabase.channel('game-channel')
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'maze-game-table', filter: `room_id=eq.${roomId}` },
+        (payload) => {
+          console.log('Game status change received!', payload);
+          router.push(`/gameplay/${roomId}`);
+        }
+      )
+      .subscribe();
+
     // Cleanup
     return () => {
-      supabase.removeChannel(channel);
+      supabase.removeChannel(playerChannel);
+      supabase.removeChannel(gameChannel);
     };
   }, [roomId, playerId]);
 
@@ -68,7 +80,7 @@ export default function Lobby() {
 
   const handleSubmit = async () => {
     console.log('Start');
-    router.push(`/gameplay/${roomId}`);
+    // router.push(`/gameplay/${roomId}`);
 
     const { data: gameData, error: gameError } = await supabase
       .from('maze-game-table')

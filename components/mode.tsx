@@ -18,6 +18,7 @@ export default function Mode() {
         sessionStorage.setItem('selectedMode', selectedMode);
         sessionStorage.setItem('roomId', roomId); // Save roomId to sessionStorage
         sessionStorage.setItem('playerId', playerId);
+        sessionStorage.setItem('is_host', 'true');
 
         const { data, error } = await supabase
             .from('game-player-table')

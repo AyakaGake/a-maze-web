@@ -17,6 +17,7 @@ export default function Join() {
         sessionStorage.setItem('playerName', playerName);
         sessionStorage.setItem('roomId', roomId);
         sessionStorage.setItem('playerId', playerId);
+        sessionStorage.setItem('is_host', 'false');
 
         const { data, error } = await supabase
             .from('game-player-table')

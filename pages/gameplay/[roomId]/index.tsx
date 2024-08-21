@@ -39,6 +39,29 @@ export default function Gameplay() {
   console.log('roomId', roomId);
   console.log('playerId', playerId);
 
+  useEffect(() => {
+    if (!roomId) return; // Ensure roomId is defined before subscribing
+
+    const clearChannel = supabase.channel('clear-channel')
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'maze-game-table', filter: `room_id=eq.${roomId}` },
+        (payload) => {
+          console.log('Game status change received!', payload);
+          // Only navigate to ranking if game_status is 'Over'
+          if (payload.new.game_status === 'Over') {
+            router.push(`/ranking/${roomId}`);
+          }
+        }
+      )
+      .subscribe();
+
+    // Cleanup
+    return () => {
+      supabase.removeChannel(clearChannel);
+    };
+  }, [roomId, router]);
+
   const handleFinish = async (clearTime: number) => {
     setIsGameOver(true);
     console.log('Game cleared in', clearTime, 'seconds');
@@ -57,9 +80,34 @@ export default function Gameplay() {
       console.error('Error saving clear time:', error);
     } else {
       console.log('Clear time saved successfully:', data);
-      router.push(`/ranking/${roomId}`);
+      // router.push(`/ranking/${roomId}`);
+      // Check if all players have cleared
+      const allCleared = await checkAllPlayersCleared();
+      if (allCleared) {
+        handleEnd();
+      }
     }
   };
+
+  const checkAllPlayersCleared = async () => {
+    if (roomId) {
+      const { data, error } = await supabase
+        .from('game-player-table')
+        .select('player_id')
+        .eq('room_id', roomId)
+        .is('clear_time', null);
+
+      if (error) {
+        console.error('Error fetching player data:', error);
+        return false;
+      }
+
+      // If there are no players with NULL clear_time, all players have cleared
+      return data.length === 0; // Returns true if no players have NULL clear_time
+    }
+    return false;
+  };
+
 
   const handleHomeClick = () => {
     router.push('/');
@@ -75,6 +123,7 @@ export default function Gameplay() {
       console.error('Error updating data in maze_game_table:', gameError);
       return;
     }
+    // router.push(`/ranking/${roomId}`);
   };
 
   return (
