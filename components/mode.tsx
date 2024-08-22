@@ -65,7 +65,7 @@ export default function Mode() {
             <input
                 type='text'
                 placeholder='Enter your display name'
-                className='border border-gray-300 rounded bg-white p-2 w-full mb-4 text-black-900 focus:border-red-700'
+                className='border border-gray-300 rounded bg-white p-2 w-full mb-4 text-gray-900 focus:border-red-700'
                 value={playerName}
                 onChange={(ev) => setPlayerName(ev.target.value)} // Update playerName state
             />
