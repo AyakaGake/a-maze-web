@@ -5,6 +5,7 @@ type Player = {
     id: number;
     player_name: string;
     clear_time: number; // time in seconds
+    player_color: string;
 };
 
 interface RankingProps {
@@ -69,22 +70,34 @@ export default function Ranking({ className, roomId }: RankingProps) {
     const rankedPlayers = getRankedPlayers(players);
 
     return (
-        <div className={`flex flex-col items-center p-10 bg-white border border-gray-300 rounded-lg shadow-lg w-80 ${className}`}>
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Ranking</h2>
-            <ul className="list-none p-0 text-gray-900 w-full">
-                {rankedPlayers.length > 0 ? (
-                    rankedPlayers.map(({ player, rank }) => (
-                        <li key={player.id} className="flex justify-between items-center mb-3 p-2 border-b border-gray-200">
-                            <span className="font-extrabold text-lg text-red-600">{rank}. {player.player_name}</span>
-                            <span className="ml-4 text-lg font-semibold text-gray-800">
-                                {player.clear_time >= UNCLEARED_TIME ? 'Not finished' : formatTime(player.clear_time)}
+        <div className={`w-full md:w-96 bg-white rounded-lg shadow-lg p-6 ${className}`}>
+            {/* <p className='text-center text-lg font-semibold mb-4'>Ranking:</p> */}
+            <ul className='space-y-4'>
+                {rankedPlayers.map(({ player, rank }) => (
+                    <li
+                        key={player.id}
+                        className='flex items-center p-3 rounded-md shadow-md bg-gray-100'
+                    >
+                        <div
+                            className={`w-12 h-12 flex items-center justify-center text-white rounded-full text-xl font-bold mr-3`}
+                            style={{ backgroundColor: player.player_color || 'gray' }} // アイコンの背景色を設定
+                        >
+                            {rank} {/* ランキングの数字を表示 */}
+                        </div>
+                        <div className='flex-grow'>
+                            <span className='text-lg font-medium'>
+                                {player.player_name}
                             </span>
-                        </li>
-                    ))
-                ) : (
-                    <li className="text-gray-500">No players yet</li>
-                )}
+                            <p className='text-sm text-gray-600'>
+                                {player.clear_time >= UNCLEARED_TIME
+                                    ? 'Not finished'
+                                    : formatTime(player.clear_time)}
+                            </p>
+                        </div>
+                    </li>
+                ))}
             </ul>
+            {/* <p className='text-center mt-4 text-lg font-semibold'>{rankedPlayers.length} players</p> */}
         </div>
     );
 }

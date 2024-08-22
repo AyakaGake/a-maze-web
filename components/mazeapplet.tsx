@@ -31,11 +31,9 @@ const MazeApplet: React.FC<Props> = ({ roomId, onFinish, playerId, playerName, p
   const [playerTrail, setPlayerTrail] = useState<{ x: number; y: number }[]>([
     { x: 1, y: 1 },
   ]);
-  const [shortestPath, setShortestPath] = useState<{ x: number; y: number }[]>(
-    []
-  );
+  // const [shortestPath, setShortestPath] = useState<{ x: number; y: number }[]>([]);
   const [drawPathFlag, setDrawPathFlag] = useState(false);
-  const [drawFlag, setDrawFlag] = useState(false);
+  // const [drawFlag, setDrawFlag] = useState(false);
   const [SIZE, setSize] = useState<number>(31);
   const [CELL_SIZE, setCellSize] = useState<number>(20);
   const [goal, setGoal] = useState<Vector>(new Vector(28, 28));
@@ -131,6 +129,9 @@ const MazeApplet: React.FC<Props> = ({ roomId, onFinish, playerId, playerName, p
   //     //
   // }, [size]);
 
+
+
+
   useEffect(() => {
     const canvas = canvasRef.current;
     if (canvas) {
@@ -140,13 +141,15 @@ const MazeApplet: React.FC<Props> = ({ roomId, onFinish, playerId, playerName, p
         drawMaze(ctx);
         drawPlayer(ctx);
         drawPlayerTrail(ctx);
-        if (drawPathFlag) {
-          drawShortestPath(ctx);
-        }
+        // if (drawPathFlag) {
+        //   drawShortestPath(ctx);
+        // }
         drawOtherPlayerPosition(ctx);
       }
     }
-  }, [playerPosition, playerTrail, shortestPath, drawPathFlag, maze, otherPlayerPositions]);
+  }, [playerPosition, playerTrail, maze, otherPlayerPositions]);
+
+
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -233,23 +236,23 @@ const MazeApplet: React.FC<Props> = ({ roomId, onFinish, playerId, playerName, p
     ctx.stroke();
   };
 
-  const drawShortestPath = (ctx: CanvasRenderingContext2D) => {
-    if (shortestPath.length > 0) {
-      ctx.strokeStyle = 'blue';
-      ctx.lineWidth = CELL_SIZE * 0.3;
-      ctx.beginPath();
-      shortestPath.forEach((pos, index) => {
-        const x = pos.x * CELL_SIZE + CELL_SIZE / 2;
-        const y = pos.y * CELL_SIZE + CELL_SIZE / 2;
-        if (index === 0) {
-          ctx.moveTo(x, y);
-        } else {
-          ctx.lineTo(x, y);
-        }
-      });
-      ctx.stroke();
-    }
-  };
+  // const drawShortestPath = (ctx: CanvasRenderingContext2D) => {
+  //   if (shortestPath.length > 0) {
+  //     ctx.strokeStyle = 'blue';
+  //     ctx.lineWidth = CELL_SIZE * 0.3;
+  //     ctx.beginPath();
+  //     shortestPath.forEach((pos, index) => {
+  //       const x = pos.x * CELL_SIZE + CELL_SIZE / 2;
+  //       const y = pos.y * CELL_SIZE + CELL_SIZE / 2;
+  //       if (index === 0) {
+  //         ctx.moveTo(x, y);
+  //       } else {
+  //         ctx.lineTo(x, y);
+  //       }
+  //     });
+  //     ctx.stroke();
+  //   }
+  // };
 
   const drawOtherPlayerPosition = (ctx: CanvasRenderingContext2D) => {
     otherPlayerPositions.forEach(({ x, y, color }) => {
