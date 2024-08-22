@@ -2,6 +2,7 @@ import Image from 'next/image';
 import { Inter } from 'next/font/google';
 import Mode from '../components/mode';
 import Join from '../components/join';
+import { Toaster } from 'sonner';
 
 const inter = Inter({ subsets: ['latin'] });
 

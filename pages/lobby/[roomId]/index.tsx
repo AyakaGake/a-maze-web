@@ -5,7 +5,7 @@ import supabase from '../../../lib/supabaseClient';
 import { generateAndSaveMaze } from '../../../components/generateAndSaveMaze';
 import { Inter } from 'next/font/google';
 import Image from 'next/image';
-// import { toast } from 'sonner';
+import { toast, Toaster } from 'sonner';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -115,14 +115,22 @@ export default function Lobby() {
 
   const copyRoomIdToClipboard = () => {
     if (roomId) {
-      navigator.clipboard.writeText(`${window.origin}/join/${roomId}`);
-      // toast.success('copied!');
+      navigator.clipboard.writeText(`${window.origin}/join/${roomId}`)
+        .then(() => {
+          toast.success('Copied to clipboard!');
+        })
+        .catch(err => {
+          toast.error('Failed to copy!');
+          console.error('Error copying text: ', err);
+        });
     }
   };
+
 
   return (
     <main className={`flex min-h-screen flex-col items-center justify-center p-24 ${inter.className} bg-custom-image`}>
       <div className='flex flex-col items-center'>
+        <Toaster position='top-center' richColors duration={1000} />
         <h1 className='text-white text-5xl w-full text-center mt-8'>Lobby</h1>
         <p className='text-white text-md font-bold flex items-center gap-2'>
           <span className='font-normal'>RoomId:</span>
