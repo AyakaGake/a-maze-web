@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
+import CopyIcon from '/images/copy.png'; // If image is located in the public/images folder
 import supabase from '../../../lib/supabaseClient';
 import { generateAndSaveMaze } from '../../../components/generateAndSaveMaze';
 import { Inter } from 'next/font/google';
+import Image from 'next/image';
+// import { toast } from 'sonner';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -14,6 +17,7 @@ export default function Lobby() {
   const [playerId, setPlayerId] = useState<string | null>(null);
   const [isHost, setIsHost] = useState<boolean | null>(null);
   const [playerColor, setPlayerColor] = useState<string | null>(null);
+  const [showCopyLabel, setShowCopyLabel] = useState<boolean>(false);
 
   useEffect(() => {
     // Access sessionStorage only in the browser
@@ -111,27 +115,59 @@ export default function Lobby() {
 
   const copyRoomIdToClipboard = () => {
     if (roomId) {
-      navigator.clipboard.writeText(roomId.toString()).then(() => {
-        alert('Room ID copied to clipboard!');
-      }).catch(err => {
-        console.error('Failed to copy:', err);
-      });
+      navigator.clipboard.writeText(`${window.origin}/join/${roomId}`);
+      // toast.success('copied!');
     }
   };
 
   return (
     <main className={`flex min-h-screen flex-col items-center justify-center p-24 ${inter.className} bg-custom-image`}>
-      <div className='flex flex-col items-center justify-center absolute top-20 left-1/2 transform -translate-x-1/2'>
-        <h1 className='text-white text-3xl font-bold mb-4'>
-          Room ID: {roomId}
-        </h1>
-        <button
-          onClick={copyRoomIdToClipboard}
-          className='mb-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition duration-200'
-        >
-          Copy Room ID
-        </button>
+      <div className='flex flex-col items-center'>
+        <h1 className='text-white text-5xl w-full text-center mt-8'>Lobby</h1>
+        <p className='text-white text-md font-bold flex items-center gap-2'>
+          <span className='font-normal'>RoomId:</span>
+          <span className='font-normal whitespace-nowrap max-w-32 text-ellipsis overflow-hidden'>
+            {roomId}
+          </span>
+          <div className='relative'>
+            {roomId ? (
+              <Image
+                src='/images/copy.png'
+                alt='Copy Icon'
+                width={20}
+                height={20}
+                onClick={copyRoomIdToClipboard}
+                style={{
+                  marginLeft: 2,
+                  cursor: 'pointer',
+                }}
+                onMouseEnter={() => {
+                  setShowCopyLabel(true);
+                }}
+                onMouseOut={() => {
+                  setShowCopyLabel(false);
+                }}
+              />
+            ) : null}
+            {showCopyLabel ? (
+              <span className='absolute left-2 bottom-6 hidden1 text-xs font-normal'>
+                copy
+              </span>
+            ) : null}
+          </div>
+        </p>
+        <ul className='w-full text-white'>
+          <p className='w-full text-white text-center text-4xl p-4 pb-2'>Rules</p>
+          <li>- Be the fastest to reach the goal</li>
+          <li>- Use the arrow keys to move</li>
+          <li>- Start is in the top-left corner</li>
+          <li>- Goal is in the bottom-right corner</li>
+
+        </ul>
       </div>
+      <br />
+
+
       <div className='w-full md:w-96 bg-white rounded-lg shadow-lg p-6'>
         <p className='text-center text-lg font-semibold mb-4'>Players:</p>
         <ul className='space-y-4'>
