@@ -4,6 +4,7 @@ import { MazeGenerator } from '../lib/mazegenerator';
 import Maze from './maze';
 import Vector from './Vector';
 import { fetchMazeData } from './fetchMazeData';
+import supabase from '../lib/supabaseClient';
 
 interface Props {
   onFinish: (clearTime: number) => void;
@@ -40,6 +41,8 @@ const MazeApplet: React.FC<Props> = ({ roomId, onFinish }) => {
     cellSize: number;
   } | null>(null);
 
+  const channel = supabase.channel(roomId)
+
   // const [playerId, setPlayerId] = useState<string | null>(null);
 
   // useEffect(() => {
@@ -52,7 +55,7 @@ const MazeApplet: React.FC<Props> = ({ roomId, onFinish }) => {
   // }, []);
 
   useEffect(() => {
-    setStartTime(Date.now()); // ゲーム開始時の時間を記録
+    setStartTime(Date.now());
     // Wall removal logic
     // const removeWalls = () => {
     //     const walls: { x: number; y: number }[] = [];
@@ -69,7 +72,6 @@ const MazeApplet: React.FC<Props> = ({ roomId, onFinish }) => {
     //     setRemovedWalls(walls);
     // };
     const fetchAndSetMazeData = async (roomId: string) => {
-      // const roomId = '4130f99c-191d-49ee-9d9a-be906cf198e6'; // 実際の roomId を設定
       if (roomId) {
         const mazeData = await fetchMazeData(roomId);
 
@@ -83,7 +85,6 @@ const MazeApplet: React.FC<Props> = ({ roomId, onFinish }) => {
           setCellSize(mazeData.cellSize);
           setGoal(new Vector(mazeData.goal.x, mazeData.goal.y));
           setStart(new Vector(mazeData.start.x, mazeData.start.y));
-          // removedWalls を設定する場合はここに追加の処理を行う
           setRemovedWalls([]); // 例: empty array for now
         }
       }
@@ -234,25 +235,6 @@ const MazeApplet: React.FC<Props> = ({ roomId, onFinish }) => {
     }
   };
 
-
-  // const sendMyPosition = async (newPosition: { x: number; y: number }) => {
-  //   if (!playerId) {
-  //     console.error('Invalid playerId:', playerId);
-  //     return;
-  //   }
-  //   try {
-
-
-  //     if (error) {
-  //       throw error;
-  //     }
-  //   } catch (error) {
-  //     console.error('Error updating player position:', error);
-  //   }
-  // };
-
-
-
   const movePlayer = (dx: number, dy: number) => {
     console.log('move');
     const newX = playerPosition.x + dx;
@@ -267,12 +249,28 @@ const MazeApplet: React.FC<Props> = ({ roomId, onFinish }) => {
     ) {
       setPlayerPosition(new Vector(newX, newY));
       setPlayerTrail((prevTrail) => [...prevTrail, { x: newX, y: newY }]);
+
+      channel.subscribe((status) => {
+        // Wait for successful connection
+        if (status !== 'SUBSCRIBED') {
+          return null
+        }
+        channel.on(
+          'broadcast',
+          { event: 'position' },
+          (payload) => messageReceived(payload)
+        )
+        channel.send({
+          type: 'broadcast',
+          event: 'position',
+          payload: { position: new Vector(newX, newY) },
+        })
+      })
+
       // sendMyPosition({ x: newX, y: newY });
       if (newX === goal.x && newY === goal.y) {
         setDrawPathFlag(true);
         const endTime = Date.now(); // ここで現在時刻を取得
-
-
 
         // if (endTime) {
         const clearTime = Math.floor((endTime - (startTime ?? 0)) / 1000); // 秒単位に変換
@@ -282,6 +280,10 @@ const MazeApplet: React.FC<Props> = ({ roomId, onFinish }) => {
       }
     }
   };
+
+  function messageReceived(payload: any) {
+    console.log(payload)
+  }
 
   return (
     <div
