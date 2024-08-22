@@ -42,6 +42,8 @@ const MazeApplet: React.FC<Props> = ({ roomId, onFinish }) => {
   } | null>(null);
 
   const channel = supabase.channel(roomId)
+  const [otherPlayerPositions, setOtherPlayerPositions] = useState<{ x: number; y: number }[]>([]);
+
 
   // const [playerId, setPlayerId] = useState<string | null>(null);
 
@@ -129,9 +131,10 @@ const MazeApplet: React.FC<Props> = ({ roomId, onFinish }) => {
         if (drawPathFlag) {
           drawShortestPath(ctx);
         }
+        drawOtherPlayerPosition(ctx);
       }
     }
-  }, [playerPosition, playerTrail, shortestPath, drawPathFlag, maze]);
+  }, [playerPosition, playerTrail, shortestPath, drawPathFlag, maze, otherPlayerPositions]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -235,11 +238,22 @@ const MazeApplet: React.FC<Props> = ({ roomId, onFinish }) => {
     }
   };
 
+  const drawOtherPlayerPosition = (ctx: CanvasRenderingContext2D) => {
+    ctx.fillStyle = 'lightblue'; // 薄い青色
+    otherPlayerPositions.forEach(pos => {
+      ctx.fillRect(
+        pos.x * CELL_SIZE,
+        pos.y * CELL_SIZE,
+        CELL_SIZE,
+        CELL_SIZE
+      );
+    });
+  };
+
   const movePlayer = (dx: number, dy: number) => {
     console.log('move');
     const newX = playerPosition.x + dx;
     const newY = playerPosition.y + dy;
-    // サイズとゴールの位置をインスタンスから取得
     if (
       newX >= 0 &&
       newX < SIZE &&
@@ -267,14 +281,13 @@ const MazeApplet: React.FC<Props> = ({ roomId, onFinish }) => {
         })
       })
 
-      // sendMyPosition({ x: newX, y: newY });
       if (newX === goal.x && newY === goal.y) {
         setDrawPathFlag(true);
-        const endTime = Date.now(); // ここで現在時刻を取得
+        const endTime = Date.now();
 
         // if (endTime) {
-        const clearTime = Math.floor((endTime - (startTime ?? 0)) / 1000); // 秒単位に変換
-        onFinish(clearTime); // ゴールに到達したときにクリアタイムを親コンポーネントに通知
+        const clearTime = Math.floor((endTime - (startTime ?? 0)) / 1000);
+        onFinish(clearTime);
 
         // }
       }
@@ -283,6 +296,9 @@ const MazeApplet: React.FC<Props> = ({ roomId, onFinish }) => {
 
   function messageReceived(payload: any) {
     console.log(payload)
+    if (payload.event === 'position') {
+      setOtherPlayerPositions([payload.payload.position]);
+    }
   }
 
   return (
