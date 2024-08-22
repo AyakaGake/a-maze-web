@@ -13,12 +13,15 @@ export default function Mode() {
         console.log("Start");
         const playerId = uuidv4();
         console.log("playerId: ", playerId);
+        const playerColor = "red";
+        console.log("playerColor: ", playerColor);
 
         sessionStorage.setItem('playerName', playerName);
         sessionStorage.setItem('selectedMode', selectedMode);
         sessionStorage.setItem('roomId', roomId); // Save roomId to sessionStorage
         sessionStorage.setItem('playerId', playerId);
         sessionStorage.setItem('is_host', 'true');
+        sessionStorage.setItem('playerColor', playerColor);
 
         const { data, error } = await supabase
             .from('game-player-table')
@@ -28,7 +31,8 @@ export default function Mode() {
                     room_id: roomId,
                     player_name: playerName,
                     created_at: new Date().toISOString(),
-                    is_host: true
+                    is_host: true,
+                    player_color: playerColor
                 }
             ])
             .select();

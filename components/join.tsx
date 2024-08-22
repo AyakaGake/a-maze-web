@@ -37,6 +37,25 @@ export default function Join() {
             return;
         }
 
+        //set player's color
+        const { data: players, error: fetchError } = await supabase
+            .from('game-player-table')
+            .select('*')
+            .eq('room_id', roomId);
+
+        if (fetchError) {
+            console.error('Error fetching players:', fetchError);
+            setError('Failed to fetch players.');
+            return;
+        }
+
+        const colors = ['red', 'blue', 'green', 'purple'];
+        const joinOrder = players.length + 1; // 次のプレイヤーの順序
+        const playerColor = colors[joinOrder - 1] || 'gray';
+        console.log("playerColor: ", playerColor);
+        sessionStorage.setItem('playerColor', playerColor);
+
+
         const gameStatus = gameStatusData.game_status;
 
         if (gameStatus === 'Waiting') {
@@ -49,7 +68,8 @@ export default function Join() {
                         room_id: roomId,
                         player_name: playerName,
                         created_at: new Date().toISOString(),
-                        is_host: false
+                        is_host: false,
+                        player_color: playerColor
                     }
                 ])
                 .select();

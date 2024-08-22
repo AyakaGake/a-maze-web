@@ -9,9 +9,19 @@ import supabase from '../lib/supabaseClient';
 interface Props {
   onFinish: (clearTime: number) => void;
   roomId: string;
+  playerId: string;
+  playerName: string;
+  playerColor: string;
 }
 
-const MazeApplet: React.FC<Props> = ({ roomId, onFinish }) => {
+interface PlayerData {
+  x: number;
+  y: number;
+  color: string;
+  playerId: string;
+}
+
+const MazeApplet: React.FC<Props> = ({ roomId, onFinish, playerId, playerName, playerColor }) => {
   const [removedWalls, setRemovedWalls] = useState<{ x: number; y: number }[]>(
     []
   );
@@ -42,8 +52,7 @@ const MazeApplet: React.FC<Props> = ({ roomId, onFinish }) => {
   } | null>(null);
 
   const channel = supabase.channel(roomId)
-  const [otherPlayerPositions, setOtherPlayerPositions] = useState<{ x: number; y: number }[]>([]);
-
+  const [otherPlayerPositions, setOtherPlayerPositions] = useState<PlayerData[]>([]);
 
   // const [playerId, setPlayerId] = useState<string | null>(null);
 
@@ -57,6 +66,9 @@ const MazeApplet: React.FC<Props> = ({ roomId, onFinish }) => {
   // }, []);
 
   useEffect(() => {
+    console.log("playerId" + playerId)
+    console.log("playerName" + playerName)
+    console.log("playerColor" + playerColor)
     setStartTime(Date.now());
     // Wall removal logic
     // const removeWalls = () => {
@@ -186,7 +198,7 @@ const MazeApplet: React.FC<Props> = ({ roomId, onFinish }) => {
       CELL_SIZE,
       CELL_SIZE
     );
-    ctx.fillStyle = 'green';
+    ctx.fillStyle = 'yellow';
     ctx.fillRect(goal.x * CELL_SIZE, goal.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
     ctx.fillStyle = 'gray';
     removedWalls.forEach((w) =>
@@ -195,7 +207,7 @@ const MazeApplet: React.FC<Props> = ({ roomId, onFinish }) => {
   };
 
   const drawPlayer = (ctx: CanvasRenderingContext2D) => {
-    ctx.fillStyle = 'red';
+    ctx.fillStyle = playerColor;
     ctx.fillRect(
       playerPosition.x * CELL_SIZE,
       playerPosition.y * CELL_SIZE,
@@ -205,7 +217,8 @@ const MazeApplet: React.FC<Props> = ({ roomId, onFinish }) => {
   };
 
   const drawPlayerTrail = (ctx: CanvasRenderingContext2D) => {
-    ctx.strokeStyle = 'rgba(255, 105, 180, 0.7)';
+    // ctx.strokeStyle = adjustColorBrightness(playerColor, 0.5);
+    ctx.strokeStyle = playerColor;
     ctx.lineWidth = CELL_SIZE * 0.5;
     ctx.beginPath();
     playerTrail.forEach((pos, index) => {
@@ -239,11 +252,11 @@ const MazeApplet: React.FC<Props> = ({ roomId, onFinish }) => {
   };
 
   const drawOtherPlayerPosition = (ctx: CanvasRenderingContext2D) => {
-    ctx.fillStyle = 'lightblue'; // 薄い青色
-    otherPlayerPositions.forEach(pos => {
+    otherPlayerPositions.forEach(({ x, y, color }) => {
+      ctx.fillStyle = color;
       ctx.fillRect(
-        pos.x * CELL_SIZE,
-        pos.y * CELL_SIZE,
+        x * CELL_SIZE,
+        y * CELL_SIZE,
         CELL_SIZE,
         CELL_SIZE
       );
@@ -277,7 +290,7 @@ const MazeApplet: React.FC<Props> = ({ roomId, onFinish }) => {
         channel.send({
           type: 'broadcast',
           event: 'position',
-          payload: { position: new Vector(newX, newY) },
+          payload: { position: new Vector(newX, newY), "playerId": playerId, "playerName": playerName, "playerColor": playerColor },
         })
       })
 
@@ -295,9 +308,22 @@ const MazeApplet: React.FC<Props> = ({ roomId, onFinish }) => {
   };
 
   function messageReceived(payload: any) {
-    console.log(payload)
     if (payload.event === 'position') {
-      setOtherPlayerPositions([payload.payload.position]);
+      const { position, playerId, playerName, playerColor } = payload.payload;
+      setOtherPlayerPositions((prevPositions) => {
+        // Update the player position or add it if it's a new player
+        const existingPlayerIndex = prevPositions.findIndex(p => p.playerId === playerId);
+        if (existingPlayerIndex >= 0) {
+          console.log('Previous Positions:', prevPositions);
+          // Update existing player
+          const updatedPositions = [...prevPositions];
+          updatedPositions[existingPlayerIndex] = { x: position.x, y: position.y, color: playerColor, playerId };
+          return updatedPositions;
+        } else {
+          // Add new player
+          return [...prevPositions, { x: position.x, y: position.y, color: playerColor, playerId }];
+        }
+      });
     }
   }
 

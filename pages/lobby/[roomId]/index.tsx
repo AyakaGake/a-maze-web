@@ -13,17 +13,17 @@ export default function Lobby() {
   const [players, setPlayers] = useState<any[]>([]);
   const [playerId, setPlayerId] = useState<string | null>(null);
   const [isHost, setIsHost] = useState<boolean | null>(null);
-  // const playerName = sessionStorage.getItem('playerName') || 'You';
-  // const playerId = sessionStorage.getItem('playerId');
-  // const is_host = sessionStorage.getItem('is_host') === 'true';
+  const [playerColor, setPlayerColor] = useState<string | null>(null);
 
   useEffect(() => {
     // Access sessionStorage only in the browser
     const storedPlayerId = sessionStorage.getItem('playerId');
     const storedIsHost = sessionStorage.getItem('is_host') === 'true';
+    const storedPlayerColor = sessionStorage.getItem('playerColor');
 
     setPlayerId(storedPlayerId);
     setIsHost(storedIsHost);
+    setPlayerColor(storedPlayerColor);
   }, []);
 
   useEffect(() => {
@@ -89,8 +89,6 @@ export default function Lobby() {
 
   const handleSubmit = async () => {
     console.log('Start');
-    // router.push(`/gameplay/${roomId}`);
-
     const { data: gameData, error: gameError } = await supabase
       .from('maze-game-table')
       .update({ game_status: 'In_progress' })
@@ -140,9 +138,12 @@ export default function Lobby() {
           {players.map((player) => (
             <li
               key={player.player_id}
-              className={`flex items-center p-3 rounded-md shadow-md ${player.player_id === playerId ? 'bg-red-200' : 'bg-gray-100'}`}
+              className={`flex items-center p-3 rounded-md shadow-md ${player.player_id === playerId ? 'bg-red-200' : 'bg-gray-100'} ${player.player_id === playerId ? '' : 'opacity-60'}`} // 自分以外のアイコンに opacity を設定
             >
-              <div className={`w-12 h-12 flex items-center justify-center ${player.player_id === playerId ? 'bg-red-500' : 'bg-red-300'} text-white rounded-full text-xl font-bold mr-3`}>
+              <div
+                className={`w-12 h-12 flex items-center justify-center text-white rounded-full text-xl font-bold mr-3`}
+                style={{ backgroundColor: player.player_color || 'gray' }} // アイコンの背景色を設定
+              >
                 {player.player_name[0]}
               </div>
               <span className='text-lg font-medium'>

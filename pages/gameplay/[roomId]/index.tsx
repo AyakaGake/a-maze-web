@@ -15,6 +15,7 @@ export default function Gameplay() {
   const [isGiveUp, setIsGiveUp] = useState<boolean>(false);
   const [playerName, setPlayerName] = useState<string | null>(null);
   const [playerId, setPlayerId] = useState<string | null>(null);
+  const [playerColor, setPlayerColor] = useState<string | null>(null);
 
   const router = useRouter(); // Initialize useRouter hook
   const { roomId } = router.query;
@@ -23,13 +24,17 @@ export default function Gameplay() {
   useEffect(() => {
     const storedName = sessionStorage.getItem('playerName');
     const storedId = sessionStorage.getItem('playerId');
+    const storedColor = sessionStorage.getItem('playerColor');
+
     setPlayerName(storedName || 'unknown');
     setPlayerId(storedId || null);
+    setPlayerColor(storedColor || 'gray');
   }, []);
 
   console.log('playerName', playerName);
   console.log('roomId', roomId);
   console.log('playerId', playerId);
+  console.log('playerColor', playerColor);
 
   useEffect(() => {
     if (!roomId) return; // Ensure roomId is defined before subscribing
@@ -139,7 +144,6 @@ export default function Gameplay() {
       console.error('Error updating data in maze_game_table:', gameError);
       return;
     }
-    // router.push(`/ranking/${roomId}`);
   };
 
   return (
@@ -148,7 +152,11 @@ export default function Gameplay() {
     >
       {/* <div className="background-overlay"></div> */}
 
-      <MazeApplet roomId={roomId as string} onFinish={handleFinish} />
+      <MazeApplet roomId={roomId as string}
+        onFinish={handleFinish}
+        playerId={playerId as string}
+        playerName={playerName as string}
+        playerColor={playerColor as string} />
 
       {/* Timer */}
       <Timer isGameOver={isGameOver} isGiveUp={isGiveUp} className='absolute top-4 right-4 z-30' />
