@@ -176,7 +176,7 @@ export default function Lobby() {
       <br />
 
       <div className='w-full md:w-96 bg-white rounded-lg shadow-lg p-6'>
-        <p className='text-center text-lg font-semibold mb-4'>Players:</p>
+        <p className='text-red-900 text-center text-lg font-semibold mb-4'>Players:</p>
         <ul className='space-y-4'>
           {players.map((player) => (
             <li
@@ -199,7 +199,7 @@ export default function Lobby() {
             </li>
           ))}
         </ul>
-        <p className='text-center mt-4 text-lg font-semibold'>{players.length} players</p>
+        <p className='text-red-900 text-center mt-4 text-lg font-semibold'>{players.length} players</p>
       </div>
       {isHost && (
         <button

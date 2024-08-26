@@ -49,8 +49,16 @@ export default function Join() {
             return;
         }
 
+        console.log("Updated players: ", players); // デバッグ用ログ
+
+        if (players.length >= 4) {
+            setError('The room is full. You cannot join this game.');
+            return;
+        }
+
         const colors = ['red', 'blue', 'green', 'purple'];
         const joinOrder = players.length + 1; // 次のプレイヤーの順序
+        console.log("joinOrder: ", joinOrder);
         const playerColor = colors[joinOrder - 1] || 'gray';
         console.log("playerColor: ", playerColor);
         sessionStorage.setItem('playerColor', playerColor);

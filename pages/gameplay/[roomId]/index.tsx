@@ -195,31 +195,36 @@ export default function Gameplay() {
       </button>
 
       {/* Player List */}
-      <div className='absolute top-4 left-4 bg-white rounded-lg shadow-lg p-4 z-30'>
+      <div className='absolute center-4 left-4 bg-white rounded-lg shadow-lg p-4 z-30'>
         <ul className='space-y-2'>
-          {players.map((player) => (
-            <li
-              key={player.player_id}
-              className={`flex items-center p-2 rounded-md shadow-md ${player.player_id === playerId ? 'bg-red-200' : 'bg-gray-100'} ${player.player_id === playerId ? '' : 'opacity-60'}`}
-            >
-              <div
-                className='w-12 h-12 flex items-center justify-center text-white rounded-full text-xl font-bold mr-3'
-                style={{ backgroundColor: player.player_color || 'gray' }}
+          {players.map((player) => {
+            // プレイヤー名が8文字以上なら、省略するテキストを作成
+            const displayName = player.player_name.length > 8
+              ? `${player.player_name.slice(0, 8)}...`
+              : player.player_name;
+
+            return (
+              <li
+                key={player.player_id}
+                className={`flex items-center p-2 rounded-md shadow-md ${player.player_id === playerId ? 'bg-red-200' : 'bg-gray-100'} ${player.player_id === playerId ? '' : 'opacity-60'}`}
               >
-                {player.player_name[0]}
-              </div>
-              <span
-                className='text-lg font-medium'
-                style={{ color: player.player_color || 'black' }}
-              >
-                {player.player_name} {player.player_id === playerId ? '(You)' : ''}
-              </span>
-            </li>
-          ))}
+                <div
+                  className='w-12 h-12 flex items-center justify-center text-white rounded-full text-xl font-bold mr-3'
+                  style={{ backgroundColor: player.player_color || 'gray' }}
+                >
+                  {player.player_name[0]}
+                </div>
+                <span
+                  className='text-lg font-medium'
+                  style={{ color: player.player_color || 'black' }}
+                >
+                  {displayName} {player.player_id === playerId ? '(You)' : ''}
+                </span>
+              </li>
+            );
+          })}
         </ul>
       </div>
-
-
     </div>
   );
 }
