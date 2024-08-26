@@ -175,7 +175,6 @@ export default function Lobby() {
       </div>
       <br />
 
-
       <div className='w-full md:w-96 bg-white rounded-lg shadow-lg p-6'>
         <p className='text-center text-lg font-semibold mb-4'>Players:</p>
         <ul className='space-y-4'>
@@ -190,9 +189,13 @@ export default function Lobby() {
               >
                 {player.player_name[0]}
               </div>
-              <span className='text-lg font-medium'>
+              <span
+                className='text-lg font-medium'
+                style={{ color: player.player_color || 'black' }} // 名前の色を player_color で設定
+              >
                 {player.player_name} {player.player_id === playerId ? '(You)' : ''}
               </span>
+
             </li>
           ))}
         </ul>

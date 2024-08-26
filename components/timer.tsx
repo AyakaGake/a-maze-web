@@ -45,7 +45,7 @@ export default function Timer({ isGameOver, isGiveUp, className }: TimerProps) {
 
     return (
         <div className={`text-3xl font-bold mb-1 ${getTextColor()} ${className}`}>
-            {isGiveUp ? 'Give Up' : isGameOver ? `Game clear: ${formatTime(seconds)}` : `Passed: ${formatTime(seconds)}`}
+            {isGiveUp ? 'Give Up' : isGameOver ? `Game clear: ${formatTime(seconds)}` : `Time: ${formatTime(seconds)}`}
         </div>
     );
 }

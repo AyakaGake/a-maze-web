@@ -16,7 +16,7 @@ export default function Gameplay() {
   const [playerName, setPlayerName] = useState<string | null>(null);
   const [playerId, setPlayerId] = useState<string | null>(null);
   const [playerColor, setPlayerColor] = useState<string | null>(null);
-
+  const [players, setPlayers] = useState<any[]>([]);
   const router = useRouter(); // Initialize useRouter hook
   const { roomId } = router.query;
   // const playerId = sessionStorage.getItem('playerId');
@@ -38,6 +38,22 @@ export default function Gameplay() {
 
   useEffect(() => {
     if (!roomId) return; // Ensure roomId is defined before subscribing
+
+    // Fetch players data
+    const getPlayers = async () => {
+      const { data, error } = await supabase
+        .from('game-player-table')
+        .select('*')
+        .eq('room_id', roomId);
+
+      if (error) {
+        console.error('Error fetching players:', error);
+      } else {
+        setPlayers(data || []);
+      }
+    };
+
+    getPlayers();
 
     const clearChannel = supabase.channel('clear-channel')
       .on(
@@ -162,13 +178,13 @@ export default function Gameplay() {
       <Timer isGameOver={isGameOver} isGiveUp={isGiveUp} className='absolute top-4 right-4 z-30' />
 
       {/* Home */}
-      <button
+      {/* <button
         type='button'
         onClick={handleHomeClick}
         className='absolute bottom-4 center-4 px-4 py-2 bg-red-600 rounded text-white hover:bg-red-700 z-100000'
       >
         Home
-      </button>
+      </button> */}
       {/* Give Up*/}
       <button
         type='button'
@@ -177,13 +193,33 @@ export default function Gameplay() {
       >
         Give Up
       </button>
-      {/* Player Name */}
-      <div
-        className='absolute bottom-4 left-4 text-white font-bold mb-1 text-3xl z-30'
-        style={{ zIndex: 20 }}
-      >
-        Player: {playerName}
+
+      {/* Player List */}
+      <div className='absolute top-4 left-4 bg-white rounded-lg shadow-lg p-4 z-30'>
+        <ul className='space-y-2'>
+          {players.map((player) => (
+            <li
+              key={player.player_id}
+              className={`flex items-center p-2 rounded-md shadow-md ${player.player_id === playerId ? 'bg-red-200' : 'bg-gray-100'} ${player.player_id === playerId ? '' : 'opacity-60'}`}
+            >
+              <div
+                className='w-12 h-12 flex items-center justify-center text-white rounded-full text-xl font-bold mr-3'
+                style={{ backgroundColor: player.player_color || 'gray' }}
+              >
+                {player.player_name[0]}
+              </div>
+              <span
+                className='text-lg font-medium'
+                style={{ color: player.player_color || 'black' }}
+              >
+                {player.player_name} {player.player_id === playerId ? '(You)' : ''}
+              </span>
+            </li>
+          ))}
+        </ul>
       </div>
+
+
     </div>
   );
 }
