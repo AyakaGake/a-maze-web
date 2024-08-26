@@ -40,6 +40,7 @@ const MazeApplet: React.FC<Props> = ({ roomId, onFinish, playerId, playerName, p
 
   const [otherPlayerPositions, setOtherPlayerPositions] = useState<PlayerData[]>([]);
   const [channel, setChannel] = useState<any>(null);
+  const [mazeLoaded, setMazeLoaded] = useState<boolean>(false);
 
   // Set up channel subscription
   useEffect(() => {
@@ -70,23 +71,33 @@ const MazeApplet: React.FC<Props> = ({ roomId, onFinish, playerId, playerName, p
 
     const fetchAndSetMazeData = async (roomId: string) => {
       if (roomId) {
-        const mazeData = await fetchMazeData(roomId);
-        if (mazeData) {
-          setMaze({
-            cells: mazeData.cells,
-            size: mazeData.size,
-            cellSize: mazeData.cellSize,
-          });
-          setSize(mazeData.size);
-          setCellSize(mazeData.cellSize);
-          setGoal(new Vector(mazeData.goal.x, mazeData.goal.y));
-          setStart(new Vector(mazeData.start.x, mazeData.start.y));
-          setRemovedWalls([]);
+        try {
+          const mazeData = await fetchMazeData(roomId);
+          if (mazeData) {
+            console.log("Fetched maze data:", mazeData);
+            setMaze({
+              cells: mazeData.cells,
+              size: mazeData.size,
+              cellSize: mazeData.cellSize,
+            });
+            setSize(mazeData.size);
+            setCellSize(mazeData.cellSize);
+            setGoal(new Vector(mazeData.goal.x, mazeData.goal.y));
+            setStart(new Vector(mazeData.start.x, mazeData.start.y));
+            setRemovedWalls([]);
+            setMazeLoaded(true);
+          }
+        } catch (error) {
+          console.error("Failed to fetch maze data:", error);
         }
       }
     };
     fetchAndSetMazeData(roomId);
   }, [roomId]);
+
+  useEffect(() => {
+    console.log("Maze loaded state changed:", mazeLoaded);
+  }, [mazeLoaded]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -105,6 +116,10 @@ const MazeApplet: React.FC<Props> = ({ roomId, onFinish, playerId, playerName, p
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       e.preventDefault();
+      if (!mazeLoaded) {
+        console.warn("Maze data is not loaded yet.");
+        return;
+      }
       switch (e.key) {
         case 'ArrowUp':
           movePlayer(0, -1);
@@ -118,22 +133,12 @@ const MazeApplet: React.FC<Props> = ({ roomId, onFinish, playerId, playerName, p
         case 'ArrowRight':
           movePlayer(1, 0);
           break;
-        case 'r':
-          setPlayerPosition(start);
-          setPlayerTrail([start]);
-          setDrawPathFlag(false);
-          break;
-        case 'd':
-          setDrawPathFlag(!drawPathFlag);
-          break;
-        default:
-          break;
       }
     };
     window.addEventListener('keydown', handleKeyDown);
 
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [playerPosition, drawPathFlag]);
+  }, [playerPosition, drawPathFlag, mazeLoaded]);
 
   const drawMaze = (ctx: CanvasRenderingContext2D) => {
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
@@ -157,6 +162,7 @@ const MazeApplet: React.FC<Props> = ({ roomId, onFinish, playerId, playerName, p
     ctx.fillStyle = playerColor;
     ctx.fillRect(playerPosition.x * CELL_SIZE, playerPosition.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
   };
+
 
   const drawPlayerTrail = (ctx: CanvasRenderingContext2D) => {
     ctx.strokeStyle = playerColor;
@@ -182,6 +188,16 @@ const MazeApplet: React.FC<Props> = ({ roomId, onFinish, playerId, playerName, p
   };
 
   const movePlayer = (dx: number, dy: number) => {
+    if (!mazeLoaded) {
+      console.warn("Maze data is not loaded yet.");
+      return;  // Prevent moving until maze data is loaded
+    }
+
+    if (!maze) {
+      console.warn("Maze data is missing.");
+      return;
+    }
+
     const newX = playerPosition.x + dx;
     const newY = playerPosition.y + dy;
     if (newX >= 0 && newX < SIZE && newY >= 0 && newY < SIZE && !maze?.cells[newY][newX]) {
