@@ -1,7 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { MazeGenerator } from '../lib/mazegenerator';
-// import MazeSolver from './mazesolver';
-import Maze from './maze';
 import Vector from './Vector';
 import { fetchMazeData } from './fetchMazeData';
 import supabase from '../lib/supabaseClient';
@@ -22,18 +19,10 @@ interface PlayerData {
 }
 
 const MazeApplet: React.FC<Props> = ({ roomId, onFinish, playerId, playerName, playerColor }) => {
-  const [removedWalls, setRemovedWalls] = useState<{ x: number; y: number }[]>(
-    []
-  );
-  const [playerPosition, setPlayerPosition] = useState<Vector>(
-    new Vector(1, 1)
-  );
-  const [playerTrail, setPlayerTrail] = useState<{ x: number; y: number }[]>([
-    { x: 1, y: 1 },
-  ]);
-  // const [shortestPath, setShortestPath] = useState<{ x: number; y: number }[]>([]);
+  const [removedWalls, setRemovedWalls] = useState<{ x: number; y: number }[]>([]);
+  const [playerPosition, setPlayerPosition] = useState<Vector>(new Vector(1, 1));
+  const [playerTrail, setPlayerTrail] = useState<{ x: number; y: number }[]>([{ x: 1, y: 1 }]);
   const [drawPathFlag, setDrawPathFlag] = useState(false);
-  // const [drawFlag, setDrawFlag] = useState(false);
   const [SIZE, setSize] = useState<number>(31);
   const [CELL_SIZE, setCellSize] = useState<number>(20);
   const [goal, setGoal] = useState<Vector>(new Vector(28, 28));
@@ -49,44 +38,39 @@ const MazeApplet: React.FC<Props> = ({ roomId, onFinish, playerId, playerName, p
     cellSize: number;
   } | null>(null);
 
-  const channel = supabase.channel(roomId)
   const [otherPlayerPositions, setOtherPlayerPositions] = useState<PlayerData[]>([]);
+  const [channel, setChannel] = useState<any>(null);
 
-  // const [playerId, setPlayerId] = useState<string | null>(null);
-
-  // useEffect(() => {
-  //   const id = localStorage.getItem('playerId');
-  //   if (id) {
-  //     setPlayerId(id);
-  //   } else {
-  //     console.error('Player ID not found in localStorage');
-  //   }
-  // }, []);
-
+  // Set up channel subscription
   useEffect(() => {
-    console.log("playerId" + playerId)
-    console.log("playerName" + playerName)
-    console.log("playerColor" + playerColor)
+    const newChannel = supabase.channel(roomId);
+    newChannel.on('broadcast', { event: 'position' }, (payload) => messageReceived(payload));
+    newChannel.subscribe((status) => {
+      if (status === 'SUBSCRIBED') {
+        console.log(`Subscribed to channel ${roomId}`);
+      }
+    });
+    setChannel(newChannel);
+
+    // Clean up subscription on component unmount or roomId change
+    return () => {
+      if (newChannel) {
+        newChannel.unsubscribe();
+        console.log(`Unsubscribed from channel ${roomId}`);
+      }
+    };
+  }, [roomId]); // Dependency array ensures this runs only when roomId changes
+
+  // Fetch and set maze data
+  useEffect(() => {
+    console.log("playerId: ", playerId);
+    console.log("playerName: ", playerName);
+    console.log("playerColor: ", playerColor);
     setStartTime(Date.now());
-    // Wall removal logic
-    // const removeWalls = () => {
-    //     const walls: { x: number; y: number }[] = [];
-    //     const random = Math.random;
-    //     for (let y = 1; y < SIZE - 1; y++) {
-    //         for (let x = 1; x < SIZE - 1; x++) {
-    //             if (((x % 2 === 0 && y % 2 === 1) || (x % 2 === 1 && y % 2 === 0)) &&
-    //                 maze.cells[x][y] && random() < 0.1) { // Adjust probability if needed
-    //                 walls.push({ x, y });
-    //                 maze.cells[y][x] = false;
-    //             }
-    //         }
-    //     }
-    //     setRemovedWalls(walls);
-    // };
+
     const fetchAndSetMazeData = async (roomId: string) => {
       if (roomId) {
         const mazeData = await fetchMazeData(roomId);
-
         if (mazeData) {
           setMaze({
             cells: mazeData.cells,
@@ -97,40 +81,12 @@ const MazeApplet: React.FC<Props> = ({ roomId, onFinish, playerId, playerName, p
           setCellSize(mazeData.cellSize);
           setGoal(new Vector(mazeData.goal.x, mazeData.goal.y));
           setStart(new Vector(mazeData.start.x, mazeData.start.y));
-          setRemovedWalls([]); // 例: empty array for now
+          setRemovedWalls([]);
         }
       }
     };
     fetchAndSetMazeData(roomId);
   }, [roomId]);
-
-  //     const removeWalls = () => {
-  //         const newCells = cells.map((row: any[]) => row.slice()); // Deep copy of the maze cells
-  //         const walls: { x: number; y: number }[] = [];
-  //         const random = Math.random;
-  //         for (let y = 1; y < SIZE - 1; y++) {
-  //             for (let x = 1; x < SIZE - 1; x++) {
-  //                 if (((x % 2 === 0 && y % 2 === 1) || (x % 2 === 1 && y % 2 === 0)) &&
-  //                     newCells[y][x] && random() < 0.1) { // Adjust probability if needed
-  //                     walls.push({ x, y });
-  //                     newCells[y][x] = false;
-  //                 }
-  //             }
-  //         }
-  //         setMaze(prevMaze => ({ ...prevMaze, cells: newCells }));
-  //         setRemovedWalls(walls);
-  //     };
-  //     removeWalls();
-  //     // Optionally, solve maze and set shortest path
-  //     // const mazeSolver = new MazeSolver(generatedMaze);
-  //     // if (mazeSolver.solve()) {
-  //     //     setShortestPath(mazeSolver.getSolution().map(v => ({ x: v.x, y: v.y })));
-  //     // }
-  //     //
-  // }, [size]);
-
-
-
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -141,15 +97,10 @@ const MazeApplet: React.FC<Props> = ({ roomId, onFinish, playerId, playerName, p
         drawMaze(ctx);
         drawPlayer(ctx);
         drawPlayerTrail(ctx);
-        // if (drawPathFlag) {
-        //   drawShortestPath(ctx);
-        // }
         drawOtherPlayerPosition(ctx);
       }
     }
   }, [playerPosition, playerTrail, maze, otherPlayerPositions]);
-
-
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -195,32 +146,19 @@ const MazeApplet: React.FC<Props> = ({ roomId, onFinish, playerId, playerName, p
       }
     }
     ctx.fillStyle = 'cyan';
-    ctx.fillRect(
-      start.x * CELL_SIZE,
-      start.y * CELL_SIZE,
-      CELL_SIZE,
-      CELL_SIZE
-    );
+    ctx.fillRect(start.x * CELL_SIZE, start.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
     ctx.fillStyle = 'yellow';
     ctx.fillRect(goal.x * CELL_SIZE, goal.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
     ctx.fillStyle = 'gray';
-    removedWalls.forEach((w) =>
-      ctx.fillRect(w.x * CELL_SIZE, w.y * CELL_SIZE, CELL_SIZE, CELL_SIZE)
-    );
+    removedWalls.forEach((w) => ctx.fillRect(w.x * CELL_SIZE, w.y * CELL_SIZE, CELL_SIZE, CELL_SIZE));
   };
 
   const drawPlayer = (ctx: CanvasRenderingContext2D) => {
     ctx.fillStyle = playerColor;
-    ctx.fillRect(
-      playerPosition.x * CELL_SIZE,
-      playerPosition.y * CELL_SIZE,
-      CELL_SIZE,
-      CELL_SIZE
-    );
+    ctx.fillRect(playerPosition.x * CELL_SIZE, playerPosition.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
   };
 
   const drawPlayerTrail = (ctx: CanvasRenderingContext2D) => {
-    // ctx.strokeStyle = adjustColorBrightness(playerColor, 0.5);
     ctx.strokeStyle = playerColor;
     ctx.lineWidth = CELL_SIZE * 0.5;
     ctx.beginPath();
@@ -236,76 +174,33 @@ const MazeApplet: React.FC<Props> = ({ roomId, onFinish, playerId, playerName, p
     ctx.stroke();
   };
 
-  // const drawShortestPath = (ctx: CanvasRenderingContext2D) => {
-  //   if (shortestPath.length > 0) {
-  //     ctx.strokeStyle = 'blue';
-  //     ctx.lineWidth = CELL_SIZE * 0.3;
-  //     ctx.beginPath();
-  //     shortestPath.forEach((pos, index) => {
-  //       const x = pos.x * CELL_SIZE + CELL_SIZE / 2;
-  //       const y = pos.y * CELL_SIZE + CELL_SIZE / 2;
-  //       if (index === 0) {
-  //         ctx.moveTo(x, y);
-  //       } else {
-  //         ctx.lineTo(x, y);
-  //       }
-  //     });
-  //     ctx.stroke();
-  //   }
-  // };
-
   const drawOtherPlayerPosition = (ctx: CanvasRenderingContext2D) => {
     otherPlayerPositions.forEach(({ x, y, color }) => {
       ctx.fillStyle = color;
-      ctx.fillRect(
-        x * CELL_SIZE,
-        y * CELL_SIZE,
-        CELL_SIZE,
-        CELL_SIZE
-      );
+      ctx.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
     });
   };
 
   const movePlayer = (dx: number, dy: number) => {
-    console.log('move');
     const newX = playerPosition.x + dx;
     const newY = playerPosition.y + dy;
-    if (
-      newX >= 0 &&
-      newX < SIZE &&
-      newY >= 0 &&
-      newY < SIZE &&
-      !maze?.cells[newY][newX]
-    ) {
+    if (newX >= 0 && newX < SIZE && newY >= 0 && newY < SIZE && !maze?.cells[newY][newX]) {
       setPlayerPosition(new Vector(newX, newY));
       setPlayerTrail((prevTrail) => [...prevTrail, { x: newX, y: newY }]);
 
-      channel.subscribe((status) => {
-        // Wait for successful connection
-        if (status !== 'SUBSCRIBED') {
-          return null
-        }
-        channel.on(
-          'broadcast',
-          { event: 'position' },
-          (payload) => messageReceived(payload)
-        )
+      if (channel) {
         channel.send({
           type: 'broadcast',
           event: 'position',
-          payload: { position: new Vector(newX, newY), "playerId": playerId, "playerName": playerName, "playerColor": playerColor },
-        })
-      })
+          payload: { position: new Vector(newX, newY), playerId, playerName, playerColor },
+        });
+      }
 
       if (newX === goal.x && newY === goal.y) {
         setDrawPathFlag(true);
         const endTime = Date.now();
-
-        // if (endTime) {
         const clearTime = Math.floor((endTime - (startTime ?? 0)) / 1000);
         onFinish(clearTime);
-
-        // }
       }
     }
   };
