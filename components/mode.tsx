@@ -78,7 +78,7 @@ export default function Mode() {
                         name="mode"
                         value="easy"
                         checked={selectedMode === 'easy'} // Controlled radio button
-                        defaultChecked onChange={(ev) => setSelectedMode(ev.target.value)}
+                        onChange={(ev) => setSelectedMode(ev.target.value)}
                         className="mr-2" />
                     Easy
                 </label>
