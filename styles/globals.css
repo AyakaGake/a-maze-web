@@ -37,6 +37,7 @@
 }
 
 .bg-custom-image {
+  height: 100dvh !important;
   background-image: url('/images/subtle-prism.jpg') !important;
   background-size: cover;
   background-position: center;
