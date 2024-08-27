@@ -175,8 +175,8 @@ const MazeApplet: React.FC<Props> = ({ roomId, onFinish, playerId, playerName, p
         console.warn("Maze data is not loaded yet.");
         return;
       }
+
       const touch = e.touches[0];
-      // スワイプ方向に基づいて移動
       const touchStartX = touch.clientX;
       const touchStartY = touch.clientY;
 
@@ -202,16 +202,16 @@ const MazeApplet: React.FC<Props> = ({ roomId, onFinish, playerId, playerName, p
             movePlayer(0, -1);
           }
         }
-        e.preventDefault(); // デフォルトのタッチ操作を無効にする
+        e.preventDefault(); // デフォルトのタッチ操作を無効化
       };
-      // window.addEventListener('touchmove', handleTouchMove);
+
+      window.addEventListener('touchmove', handleTouchMove);
 
       const handleTouchEnd = () => {
         window.removeEventListener('touchmove', handleTouchMove);
         window.removeEventListener('touchend', handleTouchEnd);
       };
 
-      window.addEventListener('touchmove', handleTouchMove);
       window.addEventListener('touchend', handleTouchEnd);
     };
 
