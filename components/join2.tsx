@@ -103,7 +103,7 @@ export default function Join() {
     };
 
     return (
-        <div className="flex flex-col items-center justify-center border border-white rounded-lg p-4 bg-white w-80">
+        <div className="flex flex-col items-center justify-center border border-white rounded-lg p-4 bg-white w-full lg:w-80">
             <input
                 type='text'
                 placeholder='Enter your display name'

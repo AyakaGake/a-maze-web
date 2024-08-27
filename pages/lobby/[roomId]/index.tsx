@@ -128,7 +128,7 @@ export default function Lobby() {
 
 
   return (
-    <main className={`flex min-h-screen flex-col items-center justify-center p-24 ${inter.className} bg-custom-image`}>
+    <main className={`flex min-h-screen flex-col items-center justify-center p-6 ${inter.className} bg-custom-image`}>
       <div className='flex flex-col items-center'>
         <Toaster position='top-center' richColors duration={1000} />
         <h1 className='text-white text-5xl w-full text-center mt-8'>Lobby</h1>

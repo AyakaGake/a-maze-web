@@ -56,7 +56,7 @@ export default function Mode() {
     };
 
     return (
-        <div className="flex flex-col items-center justify-center border border-white rounded-lg p-4 bg-white w-80">
+        <div className="flex flex-col items-center justify-center border border-white rounded-lg p-4 bg-white w-full lg:w-80">
             <h2 className='text-red-900 font-medium text-lg text-center pb-2'>
                 Host game
             </h2>

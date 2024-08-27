@@ -246,11 +246,12 @@ const MazeApplet: React.FC<Props> = ({ roomId, onFinish, playerId, playerName, p
       className='relative flex items-center justify-center'
       style={{ width: SIZE * CELL_SIZE, height: SIZE * CELL_SIZE }}
     >
-      <div className='absolute inset-0 bg-white rounded-lg shadow-lg flex items-center justify-center'>
+      <div className='bg-white rounded-lg shadow-lg flex items-center justify-center'>
         <canvas
           width={SIZE * CELL_SIZE}
           height={SIZE * CELL_SIZE}
           ref={canvasRef}
+          className='w-full'
         />
       </div>
     </div>

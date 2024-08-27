@@ -164,7 +164,7 @@ export default function Gameplay() {
 
   return (
     <div
-      className={`relative flex h-screen flex-col items-center justify-center p-24 z-10000000  bg-custom-image`}
+      className={`relative flex h-screen flex-col items-center justify-center p-6 z-10000000  bg-custom-image`}
     >
       {/* <div className="background-overlay"></div> */}
 
