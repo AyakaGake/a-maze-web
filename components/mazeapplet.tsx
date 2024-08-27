@@ -43,7 +43,7 @@ const MazeApplet: React.FC<Props> = ({ roomId, onFinish, playerId, playerName, p
   const [channel, setChannel] = useState<any>(null);
   const [mazeLoaded, setMazeLoaded] = useState<boolean>(false);
 
-  // const [phonebutton, setPhoneButton] = useState<boolean>(false);
+  // const [phone, setPhone] = useState<boolean>(false);
 
   // Set up channel subscription
   useEffect(() => {
@@ -139,9 +139,9 @@ const MazeApplet: React.FC<Props> = ({ roomId, onFinish, playerId, playerName, p
         drawPlayerTrail(ctx);
         drawOtherPlayerPosition(ctx);
         // if (window.innerWidth < 768) {  // basic size of the smartphone
-        //   setPhoneButton(true);
+        //   setPhone(true);
         // } else {
-        //   setPhoneButton(false);
+        //   setPhone(false);
         // }
       }
     }
@@ -339,7 +339,17 @@ const MazeApplet: React.FC<Props> = ({ roomId, onFinish, playerId, playerName, p
           className='w-full h-full'
         />
       </div>
-      {/* {phonebutton && <ArrowButtons onMove={handleMove} />} */}
+      {/* {phone && (
+        <div className='absolute -top-10 left-1/2 transform -translate-x-1/2 w-full p-4'>
+          <div className='bg-black text-white p-4 rounded shadow-lg'>
+            <p className='text-center'>Swipe to move the player:</p>
+            <ul className='list-disc list-inside'>
+              <li>Swipe left or right to move horizontally.</li>
+              <li>Swipe up or down to move vertically.</li>
+            </ul>
+          </div>
+        </div>
+      )} */}
     </div>
   );
 };

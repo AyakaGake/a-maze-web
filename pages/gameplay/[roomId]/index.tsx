@@ -20,6 +20,7 @@ export default function Gameplay() {
   const router = useRouter(); // Initialize useRouter hook
   const { roomId } = router.query;
   // const playerId = sessionStorage.getItem('playerId');
+  const [phone, setPhone] = useState<boolean>(false);
 
   useEffect(() => {
     const storedName = sessionStorage.getItem('playerName');
@@ -68,7 +69,11 @@ export default function Gameplay() {
         }
       )
       .subscribe();
-
+    if (window.innerWidth < 768) {  // basic size of the smartphone
+      setPhone(true);
+    } else {
+      setPhone(false);
+    }
     // Cleanup
     return () => {
       supabase.removeChannel(clearChannel);
@@ -166,6 +171,17 @@ export default function Gameplay() {
     <div
       className={`relative flex h-screen flex-col items-center justify-center p-6 z-10000000  bg-custom-image`}
     >
+      {phone && (
+        <div className='absolute top-10 transform w-full p-4'>
+          <div className='text-white p-4 rounded shadow-lg'>
+            <ul className='list-disc list-inside'>
+              <p>Swipe on the maze:</p>
+              <li>Left or right to move horizontally.</li>
+              <li>Up or down to move vertically.</li>
+            </ul>
+          </div>
+        </div>
+      )}
       {/* <div className="background-overlay"></div> */}
 
       <MazeApplet roomId={roomId as string}
