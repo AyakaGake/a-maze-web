@@ -50,6 +50,11 @@ export default function Join() {
             return;
         }
 
+        if (players.length >= 4) {
+            setError('The room is full. You cannot join this game.');
+            return;
+        }
+
         const colors = ['red', 'blue', 'green', 'purple'];
         const joinOrder = players.length + 1; // 次のプレイヤーの順序
         const playerColor = colors[joinOrder - 1] || 'gray';

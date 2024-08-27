@@ -1,7 +1,7 @@
 import supabase from '../lib/supabaseClient';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
-import { v4 as uuidv4 } from 'uuid'; // 正しくインポートする
+import { v4 as uuidv4 } from 'uuid';
 
 export default function Join() {
     const [playerName, setPlayerName] = useState<string>(''); // State for player name
@@ -12,7 +12,7 @@ export default function Join() {
     const handleSubmit = async () => {
         console.log("Join");
 
-        const playerId = uuidv4(); // uuidv4 を正しく使用
+        const playerId = uuidv4();
         console.log("playerId: ", playerId);
 
         sessionStorage.setItem('playerName', playerName);
@@ -37,7 +37,6 @@ export default function Join() {
             return;
         }
 
-        //set player's color
         const { data: players, error: fetchError } = await supabase
             .from('game-player-table')
             .select('*')
@@ -49,7 +48,7 @@ export default function Join() {
             return;
         }
 
-        console.log("Updated players: ", players); // デバッグ用ログ
+        console.log("Updated players: ", players);
 
         if (players.length >= 4) {
             setError('The room is full. You cannot join this game.');
@@ -57,7 +56,7 @@ export default function Join() {
         }
 
         const colors = ['red', 'blue', 'green', 'purple'];
-        const joinOrder = players.length + 1; // 次のプレイヤーの順序
+        const joinOrder = players.length + 1;
         console.log("joinOrder: ", joinOrder);
         const playerColor = colors[joinOrder - 1] || 'gray';
         console.log("playerColor: ", playerColor);
@@ -67,8 +66,7 @@ export default function Join() {
         const gameStatus = gameStatusData.game_status;
 
         if (gameStatus === 'Waiting') {
-            // Insert player data
-            const { data, error: insertError } = await supabase
+            const { data, error: insertError, } = await supabase
                 .from('game-player-table')
                 .insert([
                     {
@@ -87,8 +85,6 @@ export default function Join() {
                 setError('Failed to join the game.');
                 return;
             }
-
-            // Redirect to lobby
             router.push(`/lobby/${roomId}`);
         } else if (gameStatus === 'In_progress') {
             setError("You can't join this room because it is in progress now.");
