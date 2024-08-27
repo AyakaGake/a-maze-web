@@ -77,6 +77,23 @@
   }
 }
 
+/* styles.css */
+.arrow-button {
+  width: 40px;
+  height: 40px;
+  background-color: #ddd;
+  border: none;
+  border-radius: 50%;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.arrow-button:hover {
+  background-color: #ccc;
+}
+
 
 body {
   color: rgb(var(--foreground-rgb));

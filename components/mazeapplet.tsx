@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Vector from './Vector';
 import { fetchMazeData } from './fetchMazeData';
 import supabase from '../lib/supabaseClient';
+// import ArrowButtons from './arrowButton';
 
 interface Props {
   onFinish: (clearTime: number) => void;
@@ -41,6 +42,8 @@ const MazeApplet: React.FC<Props> = ({ roomId, onFinish, playerId, playerName, p
   const [otherPlayerPositions, setOtherPlayerPositions] = useState<PlayerData[]>([]);
   const [channel, setChannel] = useState<any>(null);
   const [mazeLoaded, setMazeLoaded] = useState<boolean>(false);
+
+  // const [phonebutton, setPhoneButton] = useState<boolean>(false);
 
   // Set up channel subscription
   useEffect(() => {
@@ -135,9 +138,18 @@ const MazeApplet: React.FC<Props> = ({ roomId, onFinish, playerId, playerName, p
         drawPlayer(ctx);
         drawPlayerTrail(ctx);
         drawOtherPlayerPosition(ctx);
+        // if (window.innerWidth < 768) {  // basic size of the smartphone
+        //   setPhoneButton(true);
+        // } else {
+        //   setPhoneButton(false);
+        // }
       }
     }
   }, [playerPosition, playerTrail, maze, otherPlayerPositions, CELL_SIZE]);
+
+  const handleMove = (dx: number, dy: number) => {
+    movePlayer(dx, dy);
+  };
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -161,9 +173,66 @@ const MazeApplet: React.FC<Props> = ({ roomId, onFinish, playerId, playerName, p
           break;
       }
     };
-    window.addEventListener('keydown', handleKeyDown);
 
-    return () => window.removeEventListener('keydown', handleKeyDown);
+
+
+
+    const handleTouchStart = (e: TouchEvent) => {
+      if (!mazeLoaded) {
+        console.warn("Maze data is not loaded yet.");
+        return;
+      }
+      const touch = e.touches[0];
+      // スワイプ方向に基づいて移動
+      const touchStartX = touch.clientX;
+      const touchStartY = touch.clientY;
+
+      const handleTouchMove = (e: TouchEvent) => {
+        const touchMoveX = e.touches[0].clientX;
+        const touchMoveY = e.touches[0].clientY;
+
+        const dx = touchMoveX - touchStartX;
+        const dy = touchMoveY - touchStartY;
+
+        if (Math.abs(dx) > Math.abs(dy)) {
+          // 横方向のスワイプ
+          if (dx > 0) {
+            movePlayer(1, 0);
+          } else {
+            movePlayer(-1, 0);
+          }
+        } else {
+          // 縦方向のスワイプ
+          if (dy > 0) {
+            movePlayer(0, 1);
+          } else {
+            movePlayer(0, -1);
+          }
+        }
+        e.preventDefault(); // デフォルトのタッチ操作を無効にする
+      };
+
+      window.addEventListener('touchmove', handleTouchMove);
+
+      const handleTouchEnd = () => {
+        window.removeEventListener('touchmove', handleTouchMove);
+        window.removeEventListener('touchend', handleTouchEnd);
+      };
+
+      window.addEventListener('touchend', handleTouchEnd);
+    };
+
+
+
+
+
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('touchstart', handleTouchStart);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('touchstart', handleTouchStart);
+    }
   }, [playerPosition, drawPathFlag, mazeLoaded]);
 
   const drawBackground = (ctx: CanvasRenderingContext2D | null) => {
@@ -275,19 +344,6 @@ const MazeApplet: React.FC<Props> = ({ roomId, onFinish, playerId, playerName, p
   }
 
   return (
-    // <div
-    //   className='relative flex items-center justify-center'
-    //   style={{ width: '50%' }}
-    // >
-    //   <div className='bg-white rounded-lg shadow-lg flex items-center justify-center' style={{ width: '100%', height: '100%' }}>
-    //     <canvas
-    //       ref={canvasRef}
-    //       className='w-full h-full'
-    //     />
-    //   </div>
-    // </div>
-
-
     <div className='relative flex items-center justify-center maze-container'>
       <div className='bg-white rounded-lg shadow-lg flex items-center justify-center' style={{ width: '100%', height: '100%' }}>
         <canvas
@@ -295,16 +351,8 @@ const MazeApplet: React.FC<Props> = ({ roomId, onFinish, playerId, playerName, p
           className='w-full h-full'
         />
       </div>
+      {/* {phonebutton && <ArrowButtons onMove={handleMove} />} */}
     </div>
-
-
-
-    // <div className='maze-container'>
-    //   <canvas
-    //     ref={canvasRef}
-    //     className='maze-canvas'
-    //   />
-    // </div>
   );
 };
 
