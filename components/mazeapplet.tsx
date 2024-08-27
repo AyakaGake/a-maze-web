@@ -102,7 +102,9 @@ const MazeApplet: React.FC<Props> = ({ roomId, onFinish, playerId, playerName, p
   useEffect(() => {
     const updateCanvasSize = () => {
       if (canvasRef.current) {
+
         const canvas = canvasRef.current;
+        if (canvas.getContext('2d')) { console.log('asdasd'); drawBackground(canvas.getContext('2d')) }
         const container = canvas.parentElement;
         if (container) {
           const containerWidth = container.offsetWidth;
@@ -120,7 +122,7 @@ const MazeApplet: React.FC<Props> = ({ roomId, onFinish, playerId, playerName, p
     return () => {
       window.removeEventListener('resize', updateCanvasSize);
     };
-  }, []);
+  }, [CELL_SIZE]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -164,13 +166,15 @@ const MazeApplet: React.FC<Props> = ({ roomId, onFinish, playerId, playerName, p
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [playerPosition, drawPathFlag, mazeLoaded]);
 
-  const drawBackground = (ctx: CanvasRenderingContext2D) => {
+  const drawBackground = (ctx: CanvasRenderingContext2D | null) => {
+    if (!ctx) return;
+
     ctx.fillStyle = 'white'; // Background color
     ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height); // Fill the entire canvas
   };
 
   const drawMaze = (ctx: CanvasRenderingContext2D) => {
-    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    // ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     ctx.fillStyle = 'black';
     for (let y = 0; y < SIZE; y++) {
       for (let x = 0; x < SIZE; x++) {

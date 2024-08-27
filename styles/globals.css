@@ -44,10 +44,10 @@
 }
 
 .maze-container {
-  width: 70%;
+  width: 95%;
   /* デフォルト値 */
   height: 0;
-  padding-bottom: 80%;
+  padding-bottom: 95%;
   /* 正方形を維持するための高さ調整 */
   position: relative;
   margin: auto;
@@ -64,8 +64,8 @@
 /* Medium devices (tablets, 768px and up) */
 @media (min-width: 768px) {
   .maze-container {
-    width: 60%;
-    padding-bottom: 60%;
+    width: 80%;
+    padding-bottom: 80%;
   }
 }
 
