@@ -55,6 +55,11 @@ export default function Join() {
             return;
         }
 
+        if (!playerName.trim()) {
+            setError('Please enter your display name.');
+            return;
+        }
+
         const colors = ['red', 'blue', 'green', 'purple'];
         const joinOrder = players.length + 1; // 次のプレイヤーの順序
         const playerColor = colors[joinOrder - 1] || 'gray';
@@ -102,7 +107,7 @@ export default function Join() {
             <input
                 type='text'
                 placeholder='Enter your display name'
-                className='border border-gray-300 rounded bg-white p-2 w-full mb-4 text-gray-900 focus:border-red-700'
+                className='text-gray-900 border border-gray-300 rounded bg-white p-2 w-full mb-4 text-gray-900 focus:border-red-700'
                 value={playerName}
                 onChange={(ev) => setPlayerName(ev.target.value)} // Update playerName state
             />

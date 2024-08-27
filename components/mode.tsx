@@ -7,8 +7,15 @@ export default function Mode() {
     const router = useRouter();
     const [selectedMode, setSelectedMode] = useState<string>('easy'); // Default to 'easy'
     const [playerName, setPlayerName] = useState<string>(''); // State for player name
+    const [error, setError] = useState<string | null>(null); // State for error message
 
     const handleSubmit = async () => {
+        if (!playerName.trim()) { // Check if playerName is empty
+            setError('Please enter your display name.');
+            return;
+        }
+
+        setError(null);
         const roomId = uuidv4();
         console.log("Start");
         const playerId = uuidv4();
@@ -18,7 +25,7 @@ export default function Mode() {
 
         sessionStorage.setItem('playerName', playerName);
         sessionStorage.setItem('selectedMode', selectedMode);
-        sessionStorage.setItem('roomId', roomId); // Save roomId to sessionStorage
+        sessionStorage.setItem('roomId', roomId);
         sessionStorage.setItem('playerId', playerId);
         sessionStorage.setItem('is_host', 'true');
         sessionStorage.setItem('playerColor', playerColor);
@@ -39,22 +46,13 @@ export default function Mode() {
 
         if (error) {
             console.error('Error inserting data to game_player_table:', error);
+            setError('Failed to create the game. Please try again.');
             return;
         }
 
         router.push({
             pathname: `/lobby/${roomId}`,
-            // query: { mode: selectedMode }
         });
-
-        // const { data, error } = await supabase
-        //     .from('maze-game-table')
-        //     .insert([
-        //         { room_id: id, maze_data: 'otherValue' }
-        //         // { room_id: id, maze_data: 'otherValue' },
-        //     ])
-        //     .select()
-
     };
 
     return (
@@ -65,10 +63,13 @@ export default function Mode() {
             <input
                 type='text'
                 placeholder='Enter your display name'
-                className='border border-gray-300 rounded bg-white p-2 w-full mb-4 text-gray-900 focus:border-red-700'
+                className='text-gray-900 border border-gray-300 rounded bg-white p-2 w-full mb-4 text-gray-900 focus:border-red-700'
                 value={playerName}
                 onChange={(ev) => setPlayerName(ev.target.value)} // Update playerName state
             />
+            {error && (
+                <p className='text-red-600 mb-4'>{error}</p> // Display error message
+            )}
             <p className="mb-4 text-red-900">Please choose the mode</p>
             <div className="flex gap-4 mb-4">
                 <label className="flex items-center text-red-900">

@@ -55,6 +55,11 @@ export default function Join() {
             return;
         }
 
+        if (!playerName.trim()) {
+            setError('Please enter your display name.');
+            return;
+        }
+
         const colors = ['red', 'blue', 'green', 'purple'];
         const joinOrder = players.length + 1;
         console.log("joinOrder: ", joinOrder);
@@ -103,14 +108,14 @@ export default function Join() {
             <input
                 type='text'
                 placeholder='Enter room ID'
-                className='border border-gray-300 rounded bg-white p-2 w-full mb-4 text-gray-900 focus:border-gray-500'
+                className='text-gray-900 border border-gray-300 rounded bg-white p-2 w-full mb-4 text-gray-900 focus:border-gray-500'
                 value={roomId}
                 onChange={(ev) => setRoomId(ev.target.value)} // Update roomId state
             />
             <input
                 type='text'
                 placeholder='Enter your display name'
-                className='border border-gray-300 rounded bg-white p-2 w-full mb-4 text-gray-900 focus:border-red-700'
+                className='text-gray-900 border border-gray-300 rounded bg-white p-2 w-full mb-4 text-gray-900 focus:border-red-700'
                 value={playerName}
                 onChange={(ev) => setPlayerName(ev.target.value)} // Update playerName state
             />
