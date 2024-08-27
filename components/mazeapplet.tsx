@@ -147,10 +147,6 @@ const MazeApplet: React.FC<Props> = ({ roomId, onFinish, playerId, playerName, p
     }
   }, [playerPosition, playerTrail, maze, otherPlayerPositions, CELL_SIZE]);
 
-  const handleMove = (dx: number, dy: number) => {
-    movePlayer(dx, dy);
-  };
-
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       e.preventDefault();
@@ -173,9 +169,6 @@ const MazeApplet: React.FC<Props> = ({ roomId, onFinish, playerId, playerName, p
           break;
       }
     };
-
-
-
 
     const handleTouchStart = (e: TouchEvent) => {
       if (!mazeLoaded) {
@@ -211,20 +204,16 @@ const MazeApplet: React.FC<Props> = ({ roomId, onFinish, playerId, playerName, p
         }
         e.preventDefault(); // デフォルトのタッチ操作を無効にする
       };
-
-      window.addEventListener('touchmove', handleTouchMove);
+      // window.addEventListener('touchmove', handleTouchMove);
 
       const handleTouchEnd = () => {
         window.removeEventListener('touchmove', handleTouchMove);
         window.removeEventListener('touchend', handleTouchEnd);
       };
 
+      window.addEventListener('touchmove', handleTouchMove);
       window.addEventListener('touchend', handleTouchEnd);
     };
-
-
-
-
 
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('touchstart', handleTouchStart);
@@ -232,7 +221,7 @@ const MazeApplet: React.FC<Props> = ({ roomId, onFinish, playerId, playerName, p
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('touchstart', handleTouchStart);
-    }
+    };
   }, [playerPosition, drawPathFlag, mazeLoaded]);
 
   const drawBackground = (ctx: CanvasRenderingContext2D | null) => {
@@ -264,7 +253,6 @@ const MazeApplet: React.FC<Props> = ({ roomId, onFinish, playerId, playerName, p
     ctx.fillStyle = playerColor;
     ctx.fillRect(playerPosition.x * CELL_SIZE, playerPosition.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
   };
-
 
   const drawPlayerTrail = (ctx: CanvasRenderingContext2D) => {
     ctx.strokeStyle = playerColor;

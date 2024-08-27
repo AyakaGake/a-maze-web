@@ -85,7 +85,7 @@ export default function Ranking({ className, roomId }: RankingProps) {
                             {rank} {/* ランキングの数字を表示 */}
                         </div>
                         <div className='flex-grow'>
-                            <span className='text-lg font-medium'>
+                            <span className='text-gray-900 text-lg font-medium'>
                                 {player.player_name}
                             </span>
                             <p className='text-sm text-gray-600'>
