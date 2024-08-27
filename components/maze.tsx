@@ -22,7 +22,7 @@ export default class Maze {
         switch (mode) {
             case 'easy':
                 this.size = 31;
-                this.cellSize = 20;
+                this.cellSize = 10;
                 this.goal = new Vector(this.size - 2, this.size - 2);
                 break;
             case 'hard':
@@ -95,5 +95,13 @@ export default class Maze {
 
     public getGoal(): Vector {
         return this.goal;
+    }
+
+    public getWidth() {
+        return this.size * this.cellSize;
+    }
+
+    public getHeight() {
+        return this.size * this.cellSize;
     }
 }

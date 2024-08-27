@@ -195,7 +195,7 @@ export default function Gameplay() {
       </button>
 
       {/* Player List */}
-      <div className='absolute center-4 left-4 bg-white rounded-lg shadow-lg p-4 z-30'>
+      <div className='absolute bottom-4 left-4 bg-white rounded-lg shadow-lg p-4 z-30'>
         <ul className='space-y-2'>
           {players.map((player) => {
             // プレイヤー名が8文字以上なら、省略するテキストを作成
