@@ -9,7 +9,7 @@ const inter = Inter({ subsets: ['latin'] });
 export default function Home() {
   return (
     <main
-      className={`flex min-h-screen flex-col items-center justify-center p-6 ${inter.className}  bg-custom-image`}
+      className={`flex flex-col items-center justify-center p-6 ${inter.className}  bg-custom-image`}
     >
       <div className='background-overlay'></div>
       <h1 className='text-white text-5xl mb-5 z-30'>A-Maze!!!</h1>

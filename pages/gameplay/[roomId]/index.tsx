@@ -212,7 +212,7 @@ export default function Gameplay() {
 
       {/* Player List */}
       <div className='absolute bottom-4 left-4 bg-white rounded-lg shadow-lg p-2 z-30'>
-        <ul className='space-y-2'>
+        <ul className='space-y-0'>
           {players.map((player) => {
             // プレイヤー名が8文字以上なら、省略するテキストを作成
             const displayName = player.player_name.length > 8
@@ -231,7 +231,7 @@ export default function Gameplay() {
                   {player.player_name[0]}
                 </div>
                 <span
-                  className='text-base font-medium'
+                  className='text-sm font-medium'
                   style={{ color: player.player_color || 'black' }}
                 >
                   {displayName} {player.player_id === playerId ? '(You)' : ''}

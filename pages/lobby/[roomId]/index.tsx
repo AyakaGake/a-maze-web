@@ -128,7 +128,7 @@ export default function Lobby() {
 
 
   return (
-    <main className={`flex min-h-screen flex-col items-center justify-center p-6 ${inter.className} bg-custom-image`}>
+    <main className={`flex flex-col items-center justify-center p-6 ${inter.className} bg-custom-image`}>
       <div className='flex flex-col items-center'>
         <Toaster position='top-center' richColors duration={1000} />
         <h1 className='text-white text-5xl w-full text-center mt-8'>Lobby</h1>
@@ -165,7 +165,7 @@ export default function Lobby() {
           </div>
         </p>
         <ul className='w-full text-white'>
-          <p className='w-full text-white text-center text-4xl p-4 pb-2'>Rules</p>
+          <p className='w-full text-white text-center text-3xl p-4 pb-2'>Rules</p>
           <li>- Be the fastest to reach the goal</li>
           <li>- Use the arrow keys to move</li>
           <li>- Start is in the top-left corner</li>
@@ -175,16 +175,16 @@ export default function Lobby() {
       </div>
       <br />
 
-      <div className='w-full md:w-96 bg-white rounded-lg shadow-lg p-6'>
+      <div className='w-full md:w-96 bg-white rounded-lg shadow-lg p-3'>
         <p className='text-red-900 text-center text-lg font-semibold mb-4'>Players:</p>
         <ul className='space-y-4'>
           {players.map((player) => (
             <li
               key={player.player_id}
-              className={`flex items-center p-3 rounded-md shadow-md ${player.player_id === playerId ? 'bg-red-200' : 'bg-gray-100'} ${player.player_id === playerId ? '' : 'opacity-60'}`} // 自分以外のアイコンに opacity を設定
+              className={`flex items-center p-1 rounded-md shadow-md ${player.player_id === playerId ? 'bg-red-200' : 'bg-gray-100'} ${player.player_id === playerId ? '' : 'opacity-60'}`} // 自分以外のアイコンに opacity を設定
             >
               <div
-                className={`w-12 h-12 flex items-center justify-center text-white rounded-full text-xl font-bold mr-3`}
+                className={`w-7 h-7 flex items-center justify-center text-white rounded-full text-xl font-bold mr-3`}
                 style={{ backgroundColor: player.player_color || 'gray' }} // アイコンの背景色を設定
               >
                 {player.player_name[0]}
