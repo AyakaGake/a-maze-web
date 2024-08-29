@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import CopyIcon from '/images/copy.png';
 import supabase from '../../../lib/supabaseClient';
@@ -6,7 +7,7 @@ import { generateAndSaveMaze } from '../../../components/generateAndSaveMaze';
 import { Inter } from 'next/font/google';
 import Image from 'next/image';
 import { toast, Toaster } from 'sonner';
-import { QRCodeSVG } from 'qrcode.react';
+const QRCodeSVG = dynamic(() => import('qrcode.react').then(mod => mod.QRCodeSVG), { ssr: false });
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -166,7 +167,7 @@ const Lobby = () => {
           </div>
         </p>
         <br />
-        <QRCodeSVG value={`${window.origin}/join/${roomId}`} />
+        <QRCodeSVG value={`https://a-maze-web.vercel.app/join/${roomId}`} />
 
 
         <ul className='w-full text-white'>
