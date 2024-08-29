@@ -1,15 +1,16 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import CopyIcon from '/images/copy.png'; // If image is located in the public/images folder
+import CopyIcon from '/images/copy.png';
 import supabase from '../../../lib/supabaseClient';
 import { generateAndSaveMaze } from '../../../components/generateAndSaveMaze';
 import { Inter } from 'next/font/google';
 import Image from 'next/image';
 import { toast, Toaster } from 'sonner';
+import { QRCodeSVG } from 'qrcode.react';
 
 const inter = Inter({ subsets: ['latin'] });
 
-export default function Lobby() {
+const Lobby = () => {
   const router = useRouter();
   const { roomId } = router.query;
   // const { playerId } = router.query;
@@ -131,7 +132,7 @@ export default function Lobby() {
     <main className={`flex flex-col items-center justify-center p-6 ${inter.className} bg-custom-image`}>
       <div className='flex flex-col items-center'>
         <Toaster position='top-center' richColors duration={1000} />
-        <h1 className='text-white text-5xl w-full text-center mt-8'>Lobby</h1>
+        <h1 className='text-white text-5xl w-full text-center'>Lobby</h1>
         <p className='text-white text-md font-bold flex items-center gap-2'>
           <span className='font-normal'>RoomId:</span>
           <span className='font-normal whitespace-nowrap max-w-32 text-ellipsis overflow-hidden'>
@@ -164,6 +165,10 @@ export default function Lobby() {
             ) : null}
           </div>
         </p>
+        <br />
+        <QRCodeSVG value={`${window.origin}/join/${roomId}`} />
+
+
         <ul className='w-full text-white'>
           <p className='w-full text-white text-center text-3xl p-4 pb-2'>Rules</p>
           <li>- Be the fastest to reach the goal</li>
@@ -212,3 +217,5 @@ export default function Lobby() {
     </main>
   );
 }
+
+export default Lobby
